@@ -16,7 +16,7 @@ using namespace std;
 
 class BFS {
  private:
-  Graph graph;
+  Graph& graph;
   sequence<NodeId> front;
   sequence<EdgeId> degree;
   sequence<bool> edge_flag;
@@ -39,8 +39,7 @@ class BFS {
   void bfs_seq(NodeId source, sequence<NodeId>& dst);
   size_t bfs(NodeId source, sequence<NodeId>& dst);
   BFS() = delete;
-  BFS(Graph G) {
-    graph = G;
+  BFS(Graph& G) : graph(G) {
     n = graph.n;
     front = sequence<NodeId>(n);
     degree = sequence<EdgeId>(n + 1);
@@ -50,10 +49,10 @@ class BFS {
     new_dense = sequence<bool>(n);
     threshold = graph.m / 20;
   }
-  void swap_graph() {
-    swap(graph.in_E, graph.E);
-    swap(graph.in_offset, graph.offset);
-  }
+  // void swap_graph() {
+  //   swap(graph.in_E, graph.E);
+  //   swap(graph.in_offset, graph.offset);
+  // }
 };
 
 void BFS::bfs_seq(NodeId source, sequence<NodeId>& dst) {
@@ -143,8 +142,8 @@ size_t BFS::sparse_update(sequence<NodeId>& dst) {
   timer pack_timer;
   pack_timer.start();
 #endif
-  size_t n_front = parlay::pack_into_uninitialized(
-      edge_data.cut(0, non_zeros), edge_flag.cut(0, non_zeros), front);
+  size_t n_front = pack_into_uninitialized(edge_data.cut(0, non_zeros),
+                                           edge_flag.cut(0, non_zeros), front);
 #if defined(DEBUG)
   cout << "sparse pack time " << pack_timer.stop() << endl;
 #endif

@@ -31,7 +31,7 @@ class hashbag {
     // size of hash bag
     len = bag_size[local_pointer] - bag_size[local_pointer - 1];
     // insert into a random position between [2^i, 2^(i+1)]
-    idx = (hash32(u) & (len - 1)) + bag_size[local_pointer - 1];
+    idx = (_hash(u) & (len - 1)) + bag_size[local_pointer - 1];
     // reciprocal sample rate
     rate = max(1.0, floor(len * load_factor / EXP_SAMPLES));
   }
@@ -117,15 +117,12 @@ class hashbag {
 
   template <typename Stamp_Seq>
   size_t insert(ET u, Stamp_Seq pool_stamp,
-                decltype(pool_stamp[0]) current_stamp) {
-    using stamp_type = decltype(pool_stamp[0]);
-    int local_pointer = pointer;
-    // size of hash bag
-    size_t len = bag_size[local_pointer] - bag_size[local_pointer - 1];
-    // insert into a random position between [2^i, 2^(i+1)]
-    size_t idx = (hash32(u) & (len - 1)) + bag_size[local_pointer - 1];
-    // reciprocal sample rate
-    size_t rate = ceil(len * load_factor / EXP_SAMPLES);
+                // decltype(pool_stamp[0]) current_stamp) {
+                uint32_t current_stamp) {
+    // using stamp_type = decltype(pool_stamp[0]);
+    int local_pointer;
+    size_t len, idx, rate;
+    set_values(u, local_pointer, len, idx, rate);
     while (idx % rate == 0) {
       bool succeed = false;
       uint32_t ret = counter[local_pointer];
@@ -137,18 +134,17 @@ class hashbag {
         compare_and_swap(&pointer, local_pointer, local_pointer + 1);
       }
       if (local_pointer != pointer) {
-        local_pointer = pointer;
-        len = bag_size[local_pointer] - bag_size[local_pointer - 1];
-        idx = (hash32(u) & (len - 1)) + bag_size[local_pointer - 1];
-        rate = ceil(len * load_factor / EXP_SAMPLES);
+        set_values(u, local_pointer, len, idx, rate);
       }
       if (succeed || local_pointer + 1 == num_hash_bag) {
         break;
       }
     }
-    stamp_type key_stamp = pool_stamp[idx];
-    for (int i = 0;; i++) {
-      if (compare_and_swap(&pool_stamp[idx], key_stamp, current_stamp)) {
+    // stamp_type key_stamp = pool_stamp[idx];
+    uint32_t key_stamp = pool_stamp[idx];
+    for (size_t i = 0;; i++) {
+      if (key_stamp != current_stamp &&
+          compare_and_swap(&pool_stamp[idx], key_stamp, current_stamp)) {
         break;
       }
       idx = (idx == bag_size[local_pointer] - 1 ? bag_size[local_pointer - 1]
@@ -156,11 +152,15 @@ class hashbag {
       key_stamp = pool_stamp[idx];
       if (i % MAX_PROBES == 0) {
         if (local_pointer != pointer) {
-          local_pointer = pointer;
-          len = bag_size[local_pointer] - bag_size[local_pointer - 1];
-          idx = (hash32(u) & (len - 1)) + bag_size[local_pointer - 1];
-          rate = ceil(len * load_factor / EXP_SAMPLES);
+          set_values(u, local_pointer, len, idx, rate);
         }
+      }
+      if (i == len) {
+        if (local_pointer == pointer) {
+          compare_and_swap(&pointer, local_pointer, local_pointer + 1);
+        }
+        local_pointer = pointer;
+        set_values(u, local_pointer, len, idx, rate);
       }
     }
     pool[idx] = u;
@@ -199,7 +199,8 @@ class hashbag {
 
   template <typename Out_Seq, typename Stamp_Seq>
   size_t pack(Out_Seq out, Stamp_Seq pool_stamp,
-              decltype(pool_stamp[0]) current_stamp) {
+              // decltype(pool_stamp[0]) current_stamp) {
+              uint32_t current_stamp) {
     size_t len = bag_size[pointer];
     auto pred = delayed_seq<bool>(
         len, [&](size_t i) { return pool_stamp[i] == current_stamp; });

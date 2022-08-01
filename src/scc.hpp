@@ -9,7 +9,6 @@
 #include <iostream>
 #include <queue>  // std::queue
 
-#include "bfs.hpp"
 #include "get_time.hpp"
 #include "graph.hpp"
 #include "hash_bag.h"
@@ -50,12 +49,12 @@ class SCC {
   timer bits_clear_timer;
   bool edge_map(NodeId cur_node, NodeId ngb_node,
                 gbbs::resizable_table<K, V, hash_kv>& table);
-  int multi_search_safe(sequence<size_t>& labels,
-                        gbbs::resizable_table<K, V, hash_kv>& table,
-                        bool forward, bool local);
   int multi_search(sequence<size_t>& labels,
                    gbbs::resizable_table<K, V, hash_kv>& table, bool forward,
                    bool local);
+  int multi_search_safe(sequence<size_t>& labels,
+                        gbbs::resizable_table<K, V, hash_kv>& table,
+                        bool forward, bool local);
   void time_stamp_update() {
     current_stamp++;
     if (current_stamp == numeric_limits<uint32_t>::max() - 1) {
@@ -128,20 +127,19 @@ bool SCC::edge_map(NodeId cur_node, NodeId ngb_node,
                    gbbs::resizable_table<K, V, hash_kv>& table) {
   bool labels_changed = false;
   auto s_iter = table.get_iter(cur_node);
-  if (table.resize_flag) return false;
   // int local_table_operate = 0;
   if (s_iter.init()) {
     auto table_entry = s_iter.next();
     NodeId s_label = std::get<1>(table_entry);
     labels_changed |= table.insert(std::make_tuple(ngb_node, s_label));
-    if (table.resize_flag) return false;
+    if (table.is_full()) return false;
     // local_table_operate ++;
 
     while (s_iter.has_next()) {
       auto table_entry = s_iter.next();
       s_label = std::get<1>(table_entry);
       labels_changed |= table.insert(std::make_tuple(ngb_node, s_label));
-      if (table.resize_flag) return false;
+      if (table.is_full()) return false;
       // local_table_operate ++;
     }
   }
@@ -149,16 +147,6 @@ bool SCC::edge_map(NodeId cur_node, NodeId ngb_node,
   return labels_changed;
 }
 
-int SCC::multi_search_safe(sequence<size_t>& labels,
-                           gbbs::resizable_table<K, V, hash_kv>& table,
-                           bool forward, bool local) {
-  int round = multi_search(labels, table, forward, local);
-  while (round == -1) {
-    table.double_size();
-    round = multi_search(labels, table, forward, local);
-  }
-  return round;
-}
 // template <class SI>
 // inline ?
 int SCC::multi_search(sequence<size_t>& labels,
@@ -271,9 +259,10 @@ int SCC::multi_search(sequence<size_t>& labels,
           }
         },
         1);
-    if (table.resize_flag) {
+    if (table.is_full()) {
       return -1;
     }
+
 #if defined(BREAKDOWN)
     pack_bag_timer.start();
 #endif
@@ -293,6 +282,18 @@ int SCC::multi_search(sequence<size_t>& labels,
   return round;
 }
 
+int SCC::multi_search_safe(sequence<size_t>& labels,
+                           gbbs::resizable_table<K, V, hash_kv>& table,
+                           bool forward, bool local) {
+  int round;
+  while ((round = multi_search(labels, table, forward, local)) == -1) {
+    cout << "trigger table resize" << endl;
+    parallel_for(0, graph.n, [&](size_t i) { bits[i] = 0; });
+    table.double_size();
+  }
+  return round;
+}
+
 void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
               bool local_scc) {
 #if defined(BREAKDOWN)
@@ -302,8 +303,8 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   scc_timer.start();
   current_stamp = 1;
 
-  sequence<bool> dist_1 = sequence<bool>(n);
-  sequence<bool> dist_2 = sequence<bool>(n);
+  sequence<bool> dist_1(n);
+  sequence<bool> dist_2(n);
 
   sequence<NodeId> vertices = sequence<NodeId>(n);
   parallel_for(0, n, [&](size_t i) {
@@ -428,7 +429,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*out_table_ne);
     table_forw =
         gbbs::resizable_table<K, V, hash_kv>(out_table_m, empty, hash_kv());
-    auto forward_depth = multi_search_safe(labels, table_forw, true, local_scc);
+    int out_depth = multi_search_safe(labels, table_forw, true, local_scc);
     forward_time = t_search.stop();
 #if defined(BREAKDOWN)
     multi_search_timer.stop();
@@ -445,8 +446,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*in_table_ne);
     table_back =
         gbbs::resizable_table<K, V, hash_kv>(in_table_m, empty, hash_kv());
-    auto backward_depth =
-        multi_search_safe(labels, table_back, false, local_scc);
+    int in_depth = multi_search_safe(labels, table_back, false, local_scc);
     backward_time = t_search.stop();
 #if defined(BREAKDOWN)
     multi_search_timer.stop();
@@ -459,8 +459,8 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
               << "\n";
     cout << "In search time " << backward_time << endl;
     cout << "Out search time " << forward_time << endl;
-    cout << "forward depth " << forward_depth << endl;
-    cout << "backward depth " << backward_depth << endl;
+    cout << "In search depth " << in_depth << endl;
+    cout << "Out search depth " << out_depth << endl;
 
     auto& smaller_t = (table_forw.m <= table_back.m) ? table_forw : table_back;
     auto& larger_t = (table_forw.m > table_back.m) ? table_forw : table_back;
