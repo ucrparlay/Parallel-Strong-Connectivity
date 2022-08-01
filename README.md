@@ -30,6 +30,12 @@ For example, if you want to run strongly connected components:
 ```shell
 ./scc filename 
 ```
+To enable local search in single-reachability and multi-reachability, add "-local\_reach" and "-local\_scc" options.
+
+```shell
+./scc filename -local_reach -local_scc 
+```
+
 
 The application can auto-detect the format of the input graph based on the suffix of the filename. We support the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". 
 
