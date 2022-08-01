@@ -402,8 +402,8 @@ Graph read_graph(char* filename, bool enable_mmap = true,
     cerr << "Error: Invalid graph extension\n";
   }
   if (str_filename.find("sym") != string::npos) {
-    // graph.in_offset = graph.offset;
-    // graph.in_E = graph.E;
+    graph.in_offset = graph.offset;
+    graph.in_E = graph.E;
     graph.symmetric = true;
   } else if (symmetric) {
     make_symmetric(graph);

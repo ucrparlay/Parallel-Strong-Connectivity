@@ -63,17 +63,8 @@ int main(int argc, char** argv) {
         sequence<tuple<NodeId, NodeId, NodeId>>(LeList_seq_size);
     parallel_for(0, LeList_seq_size,
                  [&](size_t i) { LeList_seq[i] = LE_LIST_P.list[i]; });
-    cout << "------ seq -----" << endl;
-    for (int i = 0; i < 100; i++) {
-      cout << get<0>(LeList_seq[i]) << " " << get<1>(LeList_seq[i]) << " "
-           << get<2>(LeList_seq[i]) << endl;
-    }
+
     LE_LIST_P.le_list(beta);
-    cout << "----- parallel -----" << endl;
-    for (int i = 0; i < 100; i++) {
-      cout << get<0>(LE_LIST_P.list[i]) << " " << get<1>(LE_LIST_P.list[i])
-           << " " << get<2>(LE_LIST_P.list[i]) << endl;
-    }
     size_t LeList_size = LE_LIST_P.list_offset;
     size_t j = 0;
     size_t i = 0;
@@ -85,10 +76,24 @@ int main(int argc, char** argv) {
       }
       if (j == LeList_size) break;
     }
-    cout << "LeList_seq size " << LeList_seq_size << endl;
-    cout << "LeList size " << LeList_size << endl;
-    cout << "i " << i << endl;
-    cout << "j " << j << endl;
+    if (LeList_seq_size == LeList_size && i == j - 1) {
+      cout << "pass check" << endl;
+    } else {
+      cout << "LeList_seq size " << LeList_seq_size << endl;
+      cout << "LeList size " << LeList_size << endl;
+      cout << "i " << i << endl;
+      cout << "j " << j << endl;
+      cout << "------ seq -----" << endl;
+      for (int i = 0; i < 100; i++) {
+        cout << get<0>(LeList_seq[i]) << " " << get<1>(LeList_seq[i]) << " "
+             << get<2>(LeList_seq[i]) << endl;
+      }
+      cout << "----- parallel -----" << endl;
+      for (int i = 0; i < 100; i++) {
+        cout << get<0>(LE_LIST_P.list[i]) << " " << get<1>(LE_LIST_P.list[i])
+             << " " << get<2>(LE_LIST_P.list[i]) << endl;
+      }
+    }
   }
   return 0;
 }

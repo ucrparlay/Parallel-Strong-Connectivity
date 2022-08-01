@@ -30,6 +30,7 @@
 #include <vector>
 
 #include "utilities.h"
+
 using namespace parlay;
 
 namespace gbbs {
@@ -49,7 +50,7 @@ struct iter_kv {
   K k;
   size_t h;
   size_t mask;
-  size_t num_probes;  // For detecting full table.
+  size_t num_probes;  // For debugging.
   T* table;
   K empty_key;
   iter_kv(K _k, size_t _h, size_t _mask, T* _table, K _empty_key)
@@ -62,18 +63,14 @@ struct iter_kv {
 
   // Finds the location of the first key
   bool init() {
-    while (1) {
+    // while (1) {
+    for (size_t i = 0; i < mask + 1; i++) {
       if (std::get<0>(table[h]) == empty_key) {
         return false;
       } else if (std::get<0>(table[h]) == k) {
         return true;
       }
       h = incrementIndex(h, mask);
-      num_probes++;
-      if (num_probes > mask) {
-        // the table is full
-        break;
-      }
     }
     return false;
   }
@@ -81,7 +78,8 @@ struct iter_kv {
   // Probes until we've found another key
   bool has_next() {
     h = incrementIndex(h, mask);
-    while (1) {
+    // while (1) {
+    while (num_probes < mask + 1) {  // mask +1 or mask?
       if (std::get<0>(table[h]) == empty_key) {
         return false;
       } else if (std::get<0>(table[h]) == k) {
@@ -89,10 +87,6 @@ struct iter_kv {
       }
       h = incrementIndex(h, mask);
       num_probes++;
-      if (num_probes > mask) {
-        // the table is full
-        break;
-      }
     }
     return false;
   }
@@ -104,7 +98,7 @@ template <class K, class V, class KeyHash>
 class resizable_table {
  public:
   using T = std::tuple<K, V>;
-  bool resize_flag;
+  bool table_full;
   size_t m;
   size_t mask;
   size_t ne;
@@ -132,20 +126,20 @@ class resizable_table {
     }
   }
 
-  resizable_table() : m(0), ne(0) {
+  resizable_table() : table_full(false), m(0), ne(0) {
     mask = 0;
     init_counts();
   }
 
   resizable_table(size_t _m, T _empty, KeyHash _key_hash)
       // : m((size_t)1 << parlay::log2_up((size_t)(1.1 * _m))),
-      : m((size_t)1 << parlay::log2_up((size_t)_m)),
+      : table_full(false),
+        m((size_t)1 << parlay::log2_up((size_t)_m)),
         mask(m - 1),
         ne(0),
         empty(_empty),
         empty_key(std::get<0>(empty)),
         key_hash(_key_hash) {
-    resize_flag = false;
     table = sequence<T>::uninitialized(m);
     clear();
     init_counts();
@@ -196,15 +190,18 @@ class resizable_table {
       update_nelms();
     }
   }
+
   void double_size() {
     m = 2 * m;
-    std::cout << "double table size to " << m << std::endl;
     mask = m - 1;
+    update_nelms();
+    ne = 0;
     table = sequence<T>::uninitialized(m);
     clear();
-    ne = 0;
-    resize_flag = false;
+    table_full = false;
   }
+
+  bool is_full() { return table_full; }
 
   iter_kv<K, V> get_iter(K k) {
     size_t h = firstIndex(k);
@@ -212,31 +209,26 @@ class resizable_table {
   }
 
   bool insert(std::tuple<K, V> kv) {
-    if (resize_flag) return false;
     K& k = std::get<0>(kv);
     V& v = std::get<1>(kv);
     size_t h = firstIndex(k);
-    size_t count = 0;
-    while (1) {
+    // size_t count = 0;
+    // while (1) {
+    for (size_t i = 0; i < 0.8 * m; i++) {
+      if (table_full) return false;
       if (std::get<0>(table[h]) == empty_key &&
           atomic_compare_and_swap(&table[h], empty, kv)) {
         size_t wn = worker_id();
         cts[wn * kResizableTableCacheLineSz]++;
-        return true;
+        return 1;
       }
       if (std::get<0>(table[h]) == k && std::get<1>(table[h]) == v) {
-        // if (h-firstIndex(k) >= 0 ) {std::cout<< "probing " << h-firstIndex(k)
-        // << std::endl;} else{std::cout << "probing " << h+m-firstIndex(k) <<
-        // std::endl;}
         return false;
       }
       h = incrementIndex(h, mask);
-      count++;
-      if (count > 0.9 * m) {
-        resize_flag = true;
-        return false;
-      }
     }
+    std::cout << "table full" << std::endl;
+    table_full = true;
     return 0;
   }
 

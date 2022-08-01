@@ -85,9 +85,10 @@ int main(int argc, char** argv) {
   double beta = P.getOptionDouble("-beta", 1.5);
   cout << "--beta " << beta << "--" << endl;
 
-  Graph graph = read_graph(
-      fileName, !P.getOption("-nmmap"));  // symmetric : 1, makeSymmetric; 2,
-                                          // makeDirected // binary
+  // Graph graph = read_graph(
+  //     fileName, !P.getOption("-nmmap"));  // symmetric : 1, makeSymmetric; 2,
+  //                                         // makeDirected // binary
+  Graph graph = read_graph(fileName);
   // Graph graph = read_large_graph(fileName);
   bool local_reach = P.getOption("-local_reach");
   bool local_scc = P.getOption("-local_scc");
@@ -116,6 +117,14 @@ int main(int argc, char** argv) {
   SCC_P.breakdown_report(repeat);
 #endif
   if (P.getOption("-status")) SCC_status(label, graph.n);
+  // cout << "-----without local search-------" << endl;
+  // local_reach = false;
+  // local_scc = false;
+  // SCC_P.scc(label, beta, local_reach, local_scc);
+  // cout << "-----with local search----------" << endl;
+  // local_reach = true;
+  // local_scc = true;
+  // SCC_P.scc(label, beta, local_reach, local_scc);
 
   return 0;
 }
