@@ -37,7 +37,9 @@ To enable local search in single-reachability and multi-reachability, add "-loca
 ```
 
 
-The application can auto-detect the format of the input graph based on the suffix of the filename. We support the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". 
+The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. Some of the binary graphs can be found in our [Google Drive](https://drive.google.com/drive/u/3/folders/1ZuhfaLmdL-EyOiWYqZGD1rOy_oSFRWe4). 
+
+For storage limit, we don't provide some of the large graphs used in our paper. They can be found in [Stanford Network Analysis Project](http://snap.stanford.edu/) and [Web Data Commons](http://webdatacommons.org/hyperlinkgraph/). 
 
 ## Reference 
 L. Wang, X. Dong, Y. Gu, Y. Sun. Parallel Strong Connectivity Based on Faster Reachability. In submission. 
