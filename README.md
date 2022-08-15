@@ -1,7 +1,7 @@
 Parallel-Strong-Connectivity 
 ====================== 
 
-This repository includes the implmentations of strongly connected components, connectivity, and least-element Lists (LE-Lists). 
+This repository includes the implementations of strongly connected components, connectivity, and least-element Lists (LE-Lists). 
 
 ## Developing 
 
@@ -30,7 +30,7 @@ For example, if you want to run strongly connected components:
 ```shell
 ./scc filename 
 ```
-To enable local search in single-reachability and multi-reachability, add "-local\_reach" and "-local\_scc" options.
+To enable local search in single-reachability and multi-reachability, add the "-local\_reach" and "-local\_scc" options.
 
 ```shell
 ./scc filename -local_reach -local_scc 
