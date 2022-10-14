@@ -64,7 +64,7 @@ struct iter_kv {
   // Finds the location of the first key
   bool init() {
     // while (1) {
-    for (size_t i = 0; i< mask+1; i++){
+    for (size_t i = 0; i < mask + 1; i++) {
       if (std::get<0>(table[h]) == empty_key) {
         return false;
       } else if (std::get<0>(table[h]) == k) {
@@ -79,7 +79,7 @@ struct iter_kv {
   bool has_next() {
     h = incrementIndex(h, mask);
     // while (1) {
-    while (num_probes < mask+1){  // mask +1 or mask?
+    while (num_probes < mask + 1) {  // mask +1 or mask?
       if (std::get<0>(table[h]) == empty_key) {
         return false;
       } else if (std::get<0>(table[h]) == k) {
@@ -126,7 +126,7 @@ class resizable_table {
     }
   }
 
-  resizable_table() :table_full(false) ,m(0), ne(0) {
+  resizable_table() : table_full(false), m(0), ne(0) {
     mask = 0;
     init_counts();
   }
@@ -191,9 +191,9 @@ class resizable_table {
     }
   }
 
-  void double_size(){
-    m = 2*m;
-    mask = m-1;
+  void double_size() {
+    m = 2 * m;
+    mask = m - 1;
     update_nelms();
     ne = 0;
     table = sequence<T>::uninitialized(m);
@@ -201,9 +201,7 @@ class resizable_table {
     table_full = false;
   }
 
-  bool is_full(){
-    return table_full;
-  }
+  bool is_full() { return table_full; }
 
   iter_kv<K, V> get_iter(K k) {
     size_t h = firstIndex(k);
@@ -211,13 +209,13 @@ class resizable_table {
   }
 
   // pair<bool,size_t > insert(std::tuple<K, V> kv) {
-  bool insert(std::tuple<K, V> kv){
+  bool insert(std::tuple<K, V> kv) {
     K& k = std::get<0>(kv);
     V& v = std::get<1>(kv);
     size_t h = firstIndex(k);
     size_t count = 0;
     // while (1) {
-    for (count=0; count<0.8*m; count++){
+    for (count = 0; count < 0.8 * m; count++) {
       // if (table_full) return make_pair(false, count);
       if (table_full) return false;
       if (std::get<0>(table[h]) == empty_key &&

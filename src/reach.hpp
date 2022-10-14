@@ -113,8 +113,8 @@ bool REACH::judge() {
 }
 
 size_t REACH::sparse_update(sequence<bool>& dst, bool local) {
-  size_t queue_front = ceil(per_core*num_workers()/ n_front);
-  size_t queue_size=min(queue_front, tau);
+  size_t queue_front = ceil(per_core * num_workers() / n_front);
+  size_t queue_size = min(queue_front, tau);
   parallel_for(
       0, n_front,
       [&](size_t i) {
@@ -122,14 +122,15 @@ size_t REACH::sparse_update(sequence<bool>& dst, bool local) {
         size_t edge_explored_cnt = 0;
         size_t deg_f = graph.offset[node + 1] - graph.offset[node];
         // size_t block_size = 2048;
-        if (local && (deg_f < queue_size) && (deg_f > 0) && (edge_explored_cnt < queue_size)) {
+        if (local && (deg_f < queue_size) && (deg_f > 0) &&
+            (edge_explored_cnt < queue_size)) {
           NodeId local_queue[queue_size];
           size_t head = 0, tail = 0;
           local_queue[tail++] = node;
           while (head < tail && tail < queue_size) {
             NodeId u = local_queue[head++];
             size_t deg_u = graph.offset[u + 1] - graph.offset[u];
-            if (deg_u > queue_size ) {
+            if (deg_u > queue_size) {
               bag.insert(u);
               break;
             } else {
@@ -137,7 +138,7 @@ size_t REACH::sparse_update(sequence<bool>& dst, bool local) {
                 NodeId v = graph.E[j];
                 if (dst[v] == false) {
                   if (compare_and_swap(&dst[v], false, true)) {
-                    edge_explored_cnt ++;
+                    edge_explored_cnt++;
                     if (tail < queue_size && edge_explored_cnt < queue_size) {
                       local_queue[tail++] = v;
                     } else {

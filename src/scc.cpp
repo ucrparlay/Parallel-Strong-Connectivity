@@ -92,10 +92,10 @@ int main(int argc, char** argv) {
   // Graph graph = read_large_graph(fileName);
   bool local_reach = P.getOption("-local_reach");
   bool local_scc = P.getOption("-local_scc");
-  _min_bag_size_ = P.getOptionInt("-lambda", 1<<10);
+  _min_bag_size_ = P.getOptionInt("-lambda", 1 << 10);
   tau = P.getOptionInt("-tau", 512);
   per_core = P.getOptionInt("-per_core", 100000000);
-  cout << "multi_tau " << tau  << " per_core " << per_core <<endl;
+  cout << "multi_tau " << tau << " per_core " << per_core << endl;
   t1.stop();
   cout << "read graph finish" << endl;
   cout << "n: " << graph.n << " m: " << graph.m << endl;
@@ -109,14 +109,14 @@ int main(int argc, char** argv) {
   // per_core = 100000000;
   // tau = 1024;
   // per_core = 100000000;
-  // size_t per_cores[6] = {10000, 100000, 200000, 1000000, 10000000, 100000000};
-  // for (auto it : per_cores){
-  // pair<bool,bool> local_cases[3] = {make_pair(false,false), make_pair(true,false),make_pair(true,true)};
-  // for (auto local_:local_cases){
+  // size_t per_cores[6] = {10000, 100000, 200000, 1000000, 10000000,
+  // 100000000}; for (auto it : per_cores){ pair<bool,bool> local_cases[3] =
+  // {make_pair(false,false), make_pair(true,false),make_pair(true,true)}; for
+  // (auto local_:local_cases){
   //   local_reach = local_.first;
   //   local_scc = local_.second;
   //   SCC_P.scc(label, beta, local_reach, local_scc);
-  
+
   //   SCC_P.timer_reset();
   //   t.reset();
   //   double scc_cost;
@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
   // #endif
   // }
   SCC_P.scc(label, beta, local_reach, local_scc);
-  
+
   SCC_P.timer_reset();
   double scc_cost;
   for (int i = 0; i < repeat; i++) {
