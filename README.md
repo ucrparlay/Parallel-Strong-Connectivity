@@ -35,6 +35,10 @@ To enable local search in single-reachability and multi-reachability, add the "-
 ```shell
 ./scc filename -local_reach -local_scc 
 ```
+Try a toy example in this repository: 
+```shell
+./scc ../data/soc-LiveJournal1.bin -local_reach -local_scc 
+```
 
 
 The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version. 
