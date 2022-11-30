@@ -9,10 +9,10 @@ This repository includes the implementations of strongly connected components, c
 * [Parlaylib](https://github.com/cmuparlay/parlaylib/tree/281cc092be61629d3c944e0facb3b1869160564c) (Tested with version 2.0.3) 
 
 ### Setting up 
-Clone the library 
+Download the library
 ```shell
-git clone https://github.com/ucrparlay/Parallel-Strong-Connectivity.git 
-cd Parallel-Strong-Connectivity/ 
+wget -c -O Parallel-Strong-Connectivity.zip https://anonymous.4open.science/api/repo/Parallel-Strong-Connectivity-876E/zip  
+unzip Parallel-Strong-Connectivity.zip  
 ```
 
 ### Building
@@ -35,7 +35,12 @@ To enable local search in single-reachability and multi-reachability, add the "-
 ./scc [input_graph] -local_reach -local_scc  
 ```
 
-The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version. 
+The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version.  
+
+If you are running our code on a machine with more than one socket, **numactl** can potentially improve the performance.  
+```shell
+numactl -i all ./scc [input_graph]  
+```
 
 ## Example
 To try the toy examples in this repository, first download the dataset with:  
