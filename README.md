@@ -35,9 +35,22 @@ To enable local search in single-reachability and multi-reachability, add the "-
 ```shell
 ./scc filename -local_reach -local_scc 
 ```
-Try a toy example in this repository: 
+
+## Example
+To try the toy examples in this repository, first download the dataset with:  
 ```shell
-./scc ../data/soc-LiveJournal1.bin -local_reach -local_scc 
+./scripts/download_dataset.sh  
+```
+Compile the code:  
+```
+cd src/  
+make  
+```
+And run it with:
+```
+./scc ../data/soc-LiveJournal1.bin -local_reach -local_scc  
+./Connectivity ../data/soc-LiveJournal1_sym.bin  
+./LeList ../data/soc-LiveJournal1_sym.bin  
 ```
 
 
