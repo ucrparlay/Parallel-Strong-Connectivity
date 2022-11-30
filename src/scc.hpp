@@ -182,8 +182,9 @@ int SCC::multi_search(sequence<size_t>& labels,
   sequence<NodeId>& E = forward ? graph.E : graph.in_E;
 
   size_t round = 0;
-  size_t queue_front = ceil(per_core * num_workers() / n_front);
-  size_t queue_size = min(queue_front, tau);
+  // size_t queue_front = ceil(per_core * num_workers() / n_front);
+  // size_t queue_size = min(queue_front, tau);
+  size_t queue_size = tau;
   // cout << "QUEUE_SIZE " << queue_size << endl;
   int sub_round = 0;
   // sequence<size_t> probes;
@@ -448,9 +449,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     cout << "n_front = " << n_front << ", origin was " << vs_size
          << " Total vertices remaining = " << n_remaining - finished << endl;
     if (n_front == 0) continue;
-    cout << "QUEUE_SIZE "
-         << min((size_t)ceil(per_core * num_workers() / n_front), (size_t)tau)
-         << endl;
+    cout << "QUEUE_SIZE " << tau << endl;
     t_search.start();
 #if defined(BREAKDOWN)
     multi_search_timer.start();
