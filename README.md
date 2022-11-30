@@ -1,7 +1,6 @@
 Parallel-Strong-Connectivity 
 ====================== 
-
-This repository includes the implementations of strongly connected components, connectivity, and least-element Lists (LE-Lists). 
+This repository includes the implementations of strongly connected components, connectivity, and least-element Lists (LE-Lists). Part of our primitives are from a public repository [GBBS](https://github.com/ParAlg/gbbs).  
 
 ## Developing 
 
@@ -24,17 +23,19 @@ make
 
 ## Usage
 ```shell
-./application filename 
+./application [input_graph]  
 ```
 For example, if you want to run strongly connected components: 
 ```shell
-./scc filename 
+./scc [input_graph]  
 ```
 To enable local search in single-reachability and multi-reachability, add the "-local\_reach" and "-local\_scc" options.
 
 ```shell
-./scc filename -local_reach -local_scc 
+./scc [input_graph] -local_reach -local_scc  
 ```
+
+The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version. 
 
 ## Example
 To try the toy examples in this repository, first download the dataset with:  
@@ -52,8 +53,3 @@ And run it with:
 ./Connectivity ../data/soc-LiveJournal1_sym.bin  
 ./LeList ../data/soc-LiveJournal1_sym.bin  
 ```
-
-
-The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version. 
-
-For storage limit, we don't provide some of the large graphs used in our paper. They can be found in [Stanford Network Analysis Project](http://snap.stanford.edu/) and [Web Data Commons](http://webdatacommons.org/hyperlinkgraph/). 
