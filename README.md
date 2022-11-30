@@ -42,14 +42,8 @@ To try the toy examples in this repository, first download the dataset with:
 ```shell
 ./scripts/download_dataset.sh  
 ```
-Compile the code:  
+And run all three applications (SCC, Connectivity, LE-lists) with:  
+```shell
+./scripts/run_all.sh 
 ```
-cd src/  
-make  
-```
-And run it with:
-```
-./scc ../data/soc-LiveJournal1.bin -local_reach -local_scc  
-./Connectivity ../data/soc-LiveJournal1_sym.bin  
-./LeList ../data/soc-LiveJournal1_sym.bin  
-```
+Then the result will be save in the ``result/`` folder.  
