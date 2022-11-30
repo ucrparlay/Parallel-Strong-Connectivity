@@ -11,6 +11,8 @@ This repository includes the implementations of strongly connected components, c
 ### Setting up 
 Download the library
 ```shell
+mkdir Parallel-Strong-Connectivity  
+cd Parallel-Strong-Connectivity  
 wget -c -O Parallel-Strong-Connectivity.zip https://anonymous.4open.science/api/repo/Parallel-Strong-Connectivity-876E/zip  
 unzip Parallel-Strong-Connectivity.zip  
 ```
