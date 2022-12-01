@@ -1,0 +1,60 @@
+Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_da444/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_da444.dir/build.make CMakeFiles/cmTC_da444.dir/build
+gmake[1]: Entering directory '/home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_da444.dir/src.cxx.o
+/usr/local/bin/c++   -DCMAKE_HAVE_LIBC_PTHREAD -o CMakeFiles/cmTC_da444.dir/src.cxx.o -c /home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_da444
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da444.dir/link.txt --verbose=1
+/usr/local/bin/c++  -DCMAKE_HAVE_LIBC_PTHREAD CMakeFiles/cmTC_da444.dir/src.cxx.o -o cmTC_da444 
+CMakeFiles/cmTC_da444.dir/src.cxx.o: In function `main':
+src.cxx:(.text+0x2d): undefined reference to `pthread_create'
+src.cxx:(.text+0x39): undefined reference to `pthread_detach'
+src.cxx:(.text+0x45): undefined reference to `pthread_cancel'
+src.cxx:(.text+0x56): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_da444.dir/build.make:106: cmTC_da444] Error 1
+gmake[1]: Leaving directory '/home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_da444/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_18fe8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_18fe8.dir/build.make CMakeFiles/cmTC_18fe8.dir/build
+gmake[1]: Entering directory '/home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_18fe8.dir/CheckFunctionExists.cxx.o
+/usr/local/bin/c++   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_18fe8.dir/CheckFunctionExists.cxx.o -c /home/lwang323/parlaylib/build/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_18fe8
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_18fe8.dir/link.txt --verbose=1
+/usr/local/bin/c++  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_18fe8.dir/CheckFunctionExists.cxx.o -o cmTC_18fe8  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_18fe8.dir/build.make:106: cmTC_18fe8] Error 1
+gmake[1]: Leaving directory '/home/lwang323/parlaylib/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_18fe8/fast] Error 2
+
+
+
