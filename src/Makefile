@@ -11,9 +11,9 @@ INTE = -DELONG
 endif
 
 ifdef GCC
-CC = g++
-else
 CC = clang++
+else
+CC = g++
 endif
 
 CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE)

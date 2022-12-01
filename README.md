@@ -5,7 +5,9 @@ This repository includes the implementations of strongly connected components, c
 ## Developing 
 
 ### Prerequisites 
-* clang with support for C++17 features (Tested with clang 14.0.6)  
+* g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
+
+> **_NOTE:_**  It does not compile with g++-8, which is a known bug that we are working on. It works with g++-7, g++-9, g++-11, and g++-12.  
 
 ### Setting up 
 Download the library
