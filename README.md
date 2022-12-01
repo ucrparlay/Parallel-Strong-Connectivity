@@ -5,8 +5,7 @@ This repository includes the implementations of strongly connected components, c
 ## Developing 
 
 ### Prerequisites 
-* g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0) 
-* [Parlaylib](https://github.com/cmuparlay/parlaylib/tree/281cc092be61629d3c944e0facb3b1869160564c) (Tested with version 2.0.3) 
+* clang with support for C++17 features (Tested with clang 14.0.6)  
 
 ### Setting up 
 Download the library
