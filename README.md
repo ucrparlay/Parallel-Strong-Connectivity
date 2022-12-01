@@ -12,7 +12,7 @@ This repository includes the implementations of strongly connected components, c
 ### Setting up 
 Download the library
 ```shell
-wget -c -O Parallel-Strong-Connectivity.zip https://www.dropbox.com/s/q3ri2xj31o2awuo/Parallel-Strong-Connectivity.zip?dl=1  
+wget -c -O Parallel-Strong-Connectivity.zip "https://www.dropbox.com/s/q3ri2xj31o2awuo/Parallel-Strong-Connectivity.zip?dl=1"  
 unzip Parallel-Strong-Connectivity.zip  
 cd Parallel-Strong-Connectivity/  
 ```
