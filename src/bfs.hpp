@@ -1,12 +1,13 @@
 #ifndef BFS_H
 #define BFS_H
 
-#include <parlay/parallel.h>
-#include <parlay/random.h>
 
 #include <algorithm>
 #include <iostream>
 #include <queue>  // std::queue
+
+#include "parlay/parallel.h"
+#include "parlay/random.h"
 
 #include "get_time.hpp"
 #include "graph.hpp"

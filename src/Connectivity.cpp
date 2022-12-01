@@ -1,7 +1,7 @@
 #include "Connectivity.h"
 
-#include <parlay/monoid.h>
-#include <parlay/primitives.h>
+#include "parlay/monoid.h"
+#include "parlay/primitives.h"
 
 #include "parseCommandLine.hpp"
 
