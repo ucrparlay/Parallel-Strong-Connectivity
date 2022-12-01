@@ -2,14 +2,14 @@
 
 #include <fcntl.h>
 #include <malloc.h>
-// #include <parlay/parallel.h>
-#include "../parlaylib/include/parlay/parallel.h"
-// #include <parlay/primitives.h>
-#include "../parlaylib/include/parlay/primitives.h"
-// #include <parlay/random.h>
-#include "../parlaylib/include/parlay/random.h"
-// #include <parlay/sequence.h>
-#include "../parlaylib/include/parlay/sequence.h"
+#include "parlay/parallel.h"
+// #include "../parlaylib/include/parlay/parallel.h"
+#include "parlay/primitives.h"
+// #include "../parlaylib/include/parlay/primitives.h"
+#include "parlay/random.h"
+// #include "../parlaylib/include/parlay/random.h"
+#include "parlay/sequence.h"
+// #include "../parlaylib/include/parlay/sequence.h"
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>

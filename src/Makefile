@@ -16,6 +16,8 @@ else
 CC = g++
 endif
 
+INCLUDE_PATH = -I../parlaylib/include/
+
 CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE)
 
 ifdef CILKPLUS
@@ -43,13 +45,13 @@ COMMON = graph.hpp parseCommandLine.hpp utilities.h get_time.hpp hash_bag.h resi
 all: Connectivity scc LeList
 
 Connectivity: Connectivity.h Connectivity.cpp ldd.hpp union_find_rules.h $(COMMON)
-	$(CC) $(CPPFLAGS) Connectivity.cpp -o Connectivity
+	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) Connectivity.cpp -o Connectivity
 
 scc: scc.hpp scc.cpp bfs.hpp reach.hpp $(COMMON)
-	$(CC) $(CPPFLAGS) scc.cpp -o scc
+	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) scc.cpp -o scc
 
 LeList: LeList.hpp LeList.cpp resizable_table.h $(COMMON)
-	$(CC) $(CPPFLAGS) LeList.cpp -o LeList
+	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) LeList.cpp -o LeList
 
 clean:
 	rm Connectivity scc LeList
