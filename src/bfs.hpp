@@ -6,8 +6,10 @@
 #include <iostream>
 #include <queue>  // std::queue
 
-#include "parlay/parallel.h"
-#include "parlay/random.h"
+// #include <parlay/parallel.h>
+// #include <parlay/random.h>
+#include "../parlaylib/include/parlay/parallel.h"
+#include "../parlaylib/include/parlay/random.h"
 
 #include "get_time.hpp"
 #include "graph.hpp"

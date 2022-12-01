@@ -22,8 +22,10 @@
 
 #pragma once
 
-#include "parlay/primitives.h"
-#include "parlay/sequence.h"
+// #include <parlay/primitives.h>
+// #include <parlay/sequence.h>
+#include "../parlaylib/include/parlay/primitives.h"
+#include "../parlaylib/include/parlay/sequence.h"
 
 #include <tuple>
 #include <unordered_set>

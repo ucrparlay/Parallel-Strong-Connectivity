@@ -1,8 +1,12 @@
 #pragma once
-#include "parlay/parallel.h"
-#include "parlay/primitives.h"
-#include "parlay/sequence.h"
-#include "parlay/utilities.h"
+// #include <parlay/parallel.h>
+// #include <parlay/primitives.h>
+// #include <parlay/sequence.h>
+// #include <parlay/utilities.h>
+#include "../parlaylib/include/parlay/parallel.h"
+#include "../parlaylib/include/parlay/primitives.h"
+#include "../parlaylib/include/parlay/sequence.h"
+#include "../parlaylib/include/parlay/utilities.h"
 
 #include "get_time.hpp"
 #include "utilities.h"

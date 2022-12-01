@@ -2,8 +2,10 @@
 #ifndef REACH_H
 #define REACH_H
 
-#include "parlay/parallel.h"
-#include "parlay/random.h"
+// #include <parlay/parallel.h>
+// #include <parlay/random.h>
+#include "../parlaylib/include/parlay/parallel.h"
+#include "../parlaylib/include/parlay/random.h"
 
 #include <algorithm>
 #include <iostream>
