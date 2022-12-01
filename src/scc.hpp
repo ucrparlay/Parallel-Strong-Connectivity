@@ -361,36 +361,32 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   init_timer.stop();
 #endif
 
-  cout << "------------------------------------" << endl;
-  cout << "initial time " << scc_timer.stop() << endl;
-  cout << "Filtered: " << ZEROS.size()
-       << " vertices. Num remaining = " << NON_ZEROS.size() << endl;
+  // cout << "------------------------------------" << endl;
+  // cout << "initial time " << scc_timer.stop() << endl;
+  // cout << "Filtered: " << ZEROS.size()
+  //      << " vertices. Num remaining = " << NON_ZEROS.size() << endl;
   scc_timer.start();
   NodeId step_size = 1, cur_offset = 0, finished = 0, cur_round = 0;
   label_offset = ZEROS.size() + 1;
 
   // ----------------first round, for the BIG SCC -------------------------
-  long bfs_forward_depth, bfs_backward_depth;
   NodeId source = P[0];
   // BFS BFS_P(graph);
-  cout << "source " << source << endl;
 #if defined(BREAKDOWN)
   first_round_timer.start();
 #endif
   REACH REACH_P(graph);
   // bool no_dense = false;
   REACH_P.reach(source, dist_1, local_reach);
-  bfs_forward_depth = REACH_P.num_round;
 
   REACH_P.swap_graph();
   REACH_P.reach(source, dist_2, local_reach);
 
   // bfs_backward_time = first_round_timer.stop();
   // first_round_timer.start();
-  bfs_backward_depth = REACH_P.num_round;
-  cout << "first round, "
-       << "source " << source << " bfs_forward_depth " << bfs_forward_depth
-       << " bfs_backward_depth " << bfs_backward_depth << endl;
+  // cout << "first round, "
+  //      << "source " << source << " bfs_forward_depth " << bfs_forward_depth
+  //      << " bfs_backward_depth " << bfs_backward_depth << endl;
   REACH_P.swap_graph();
   NodeId label = label_offset;
   parallel_for(0, P.size(), [&](size_t i) {
@@ -406,13 +402,13 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   first_round_timer.stop();
 #endif
 #if defined(DEBUG)
-  cout << "First Round Time " << scc_timer.stop() << endl;
-  scc_timer.start();
+  // cout << "First Round Time " << scc_timer.stop() << endl;
+  // scc_timer.start();
 #endif
   label_offset++;
-  cout << "After first round, |FRONT| = " << centers.size()
-       << " vertices remain. Total done = " << P.size() - centers.size()
-       << endl;
+  // cout << "After first round, |FRONT| = " << centers.size()
+  //      << " vertices remain. Total done = " << P.size() - centers.size()
+  //      << endl;
   // cout << "centers: ";
   // for (int i = 0; i<10; i++){
   //     cout << centers[i] << " ";
@@ -422,10 +418,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   timer t_search;
   timer t_interset;
   timer t_round;
-  double forward_time = 0;
-  double backward_time = 0;
   // double intersect_time=0;
-  double round_time = 0;
   NodeId n_remaining = centers.size();
 
   NodeId in_table_ne = 1;
@@ -438,7 +431,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
 
     step_size = ceil(step_size * beta);
     cur_round++;
-    cout << "round = " << cur_round << " ";
+    // cout << "round = " << cur_round << " ";
     // front = parlay::filter(centers.cut(cur_offset, end), [&](NodeId v){return
     // !(labels[v] & TOP_BIT);});
     auto pred = delayed_seq<bool>(vs_size, [&](NodeId i) {
@@ -447,10 +440,10 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     n_front = pack_into_uninitialized(centers.cut(cur_offset, end), pred,
                                       make_slice(front));
     cur_offset = end;
-    cout << "n_front = " << n_front << ", origin was " << vs_size
-         << " Total vertices remaining = " << n_remaining - finished << endl;
+    // cout << "n_front = " << n_front << ", origin was " << vs_size
+    //      << " Total vertices remaining = " << n_remaining - finished << endl;
     if (n_front == 0) continue;
-    cout << "QUEUE_SIZE " << tau << endl;
+    // cout << "QUEUE_SIZE " << tau << endl;
     t_search.start();
 #if defined(BREAKDOWN)
     multi_search_timer.start();
@@ -463,8 +456,8 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*out_table_ne);
     table_forw =
         gbbs::resizable_table<K, V, hash_kv>(out_table_m, empty, hash_kv());
-    int out_depth = multi_search_safe(labels, table_forw, true, local_scc);
-    forward_time = t_search.stop();
+    multi_search_safe(labels, table_forw, true, local_scc);
+    t_search.stop();
     // #if defined(BREAKDOWN)
     //     multi_search_timer.stop();
     // #endif
@@ -480,21 +473,21 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*in_table_ne);
     table_back =
         gbbs::resizable_table<K, V, hash_kv>(in_table_m, empty, hash_kv());
-    int in_depth = multi_search_safe(labels, table_back, false, local_scc);
-    backward_time = t_search.stop();
+    multi_search_safe(labels, table_back, false, local_scc);
+    t_search.stop();
 #if defined(BREAKDOWN)
     multi_search_timer.stop();
 #endif
 
     label_offset += n_front;
-    std::cout << "in_table, m = " << table_back.m << " ne = " << table_back.ne
-              << "\n";
-    std::cout << "out_table, m = " << table_forw.m << " ne = " << table_forw.ne
-              << "\n";
-    cout << "In search time " << backward_time << endl;
-    cout << "Out search time " << forward_time << endl;
-    cout << "In search depth " << in_depth << endl;
-    cout << "Out search depth " << out_depth << endl;
+    // std::cout << "in_table, m = " << table_back.m << " ne = " << table_back.ne
+    //           << "\n";
+    // std::cout << "out_table, m = " << table_forw.m << " ne = " << table_forw.ne
+    //           << "\n";
+    // cout << "In search time " << backward_time << endl;
+    // cout << "Out search time " << forward_time << endl;
+    // cout << "In search depth " << in_depth << endl;
+    // cout << "Out search depth " << out_depth << endl;
 
     auto& smaller_t = (table_forw.m <= table_back.m) ? table_forw : table_back;
     auto& larger_t = (table_forw.m > table_back.m) ? table_forw : table_back;
@@ -537,15 +530,14 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
 
     // in_table.del();
     // out_table.del();
-    round_time = t_round.stop();
-    cout << "Round time " << round_time << endl;
+    t_round.stop();
+    // cout << "Round time " << round_time << endl;
   }
 
   parallel_for(0, graph.n,
                [&](NodeId i) { labels[i] = (labels[i] & VAL_MASK) - 1; });
   scc_timer.stop();
-  cout << "scc_time " << scc_timer.get_total() << endl;
-  cout << endl;
+  // cout << "scc_time " << scc_timer.get_total() << endl;
 }
 
 #endif

@@ -206,7 +206,6 @@ EdgeId REACH::dense_sample(NodeId rand_seed) {
 }
 
 void REACH::reach(NodeId source, sequence<bool>& dst, bool local) {
-  cout << "reach_tau " << tau << endl;
   parallel_for(0, graph.n, [&](NodeId i) { dst[i] = false; });
   front[0] = source;
   dst[source] = true;

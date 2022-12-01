@@ -95,14 +95,15 @@ int main(int argc, char** argv) {
   _min_bag_size_ = P.getOptionInt("-lambda", 1 << 10);
   tau = P.getOptionInt("-tau", 512);
   // per_core = P.getOptionInt("-per_core", 100000000);
-  cout << "multi_tau " << tau << " per_core " << per_core << endl;
+  cout << "tau " << tau  << endl;
   t1.stop();
-  cout << "read graph finish" << endl;
-  cout << "n: " << graph.n << " m: " << graph.m << endl;
+  cout << "input graph: " << fileName << endl;
+  cout << "number of vertices: " << graph.n << ", number of edges: " << graph.m << endl;
+  // cout << "enable VGC1: " << local_reach << ", enable VGC_multi: " << local_scc << endl;
 
   // size_t* label = new size_t[graph.n];
   sequence<size_t> label = sequence<size_t>(graph.n);
-  int repeat = P.getOptionInt("-t", (int)5);
+  int repeat = P.getOptionInt("-t", (int)10);
   timer t;
   SCC SCC_P(graph);
   // tau = 1024;
