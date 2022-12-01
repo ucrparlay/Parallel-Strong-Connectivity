@@ -1,7 +1,7 @@
 #pragma once
 #include <assert.h>
-#include <parlay/parallel.h>
-#include <parlay/random.h>
+#include "parlay/parallel.h"
+#include "parlay/random.h"
 
 #include <algorithm>
 #include <cmath>

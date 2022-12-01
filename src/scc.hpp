@@ -2,7 +2,7 @@
 #define SCC_H
 
 #include <math.h>
-#include <parlay/random.h>
+#include "parlay/random.h"
 #include <stdio.h>
 
 #include <algorithm>
