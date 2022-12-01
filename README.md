@@ -13,12 +13,23 @@ This repository includes the implementations of strongly connected components, c
 Download the library
 ```shell
 wget -c -O Parallel-Strong-Connectivity.zip "https://www.dropbox.com/s/q3ri2xj31o2awuo/Parallel-Strong-Connectivity.zip?dl=1"  
-unzip Parallel-Strong-Connectivity.zip  
+unzip Parallel-Strong-Connectivity.zip   
 cd Parallel-Strong-Connectivity/  
 ```
 
+## Example
+To try the toy examples in this repository, first download the dataset with:  
+```shell
+./scripts/download_dataset.sh  
+```
+And run all three applications (SCC, Connectivity, LE-lists) with:  
+```shell
+./scripts/run_all.sh  
+```
+Then the result will be save in the ``result/`` folder.  
+
 ### Building
-A makefile is given under src/, you can compile the code by: 
+Alternatively, users can compile the code on their own. A makefile is given under the folder ``src/``, you can compile the code by:  
 ```shell
 make 
 ```
@@ -43,14 +54,3 @@ If you are running our code on a machine with more than one socket, **numactl** 
 ```shell
 numactl -i all ./scc [input_graph]  
 ```
-
-## Example
-To try the toy examples in this repository, first download the dataset with:  
-```shell
-./scripts/download_dataset.sh  
-```
-And run all three applications (SCC, Connectivity, LE-lists) with:  
-```shell
-./scripts/run_all.sh 
-```
-Then the result will be save in the ``result/`` folder.  
