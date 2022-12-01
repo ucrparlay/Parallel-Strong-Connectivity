@@ -320,7 +320,7 @@ sequence<size_t> integer_sort_(slice<InIterator, InIterator> In,
   if (bits == 0) {
     auto get_key = [&](size_t i) { return static_cast<size_t>(g(In[i])); };
     auto keys = delayed_seq<size_t>(In.size(), get_key);
-    bits = log2_up(internal::reduce(make_slice(keys), maxm<size_t>()) + 1);
+    bits = log2_up(internal::reduce(make_slice(keys), maximum<size_t>()) + 1);
   }
   return integer_sort_r<inplace_tag, assignment_tag>(
     In, Out, Tmp, g, bits, num_buckets);
@@ -356,6 +356,9 @@ auto integer_sort(slice<Iterator, Iterator> In,
 template <typename Tint = size_t, typename Iterator, typename Get_Key>
 sequence<Tint> get_counts(slice<Iterator, Iterator> In, Get_Key const &g, size_t num_buckets) {
   size_t n = In.size();
+  if (n == 0) {
+    return {};
+  }
   sequence<Tint> starts(num_buckets, (Tint)0);
   sequence<Tint> ends(num_buckets, (Tint)0);
   parallel_for(0, n - 1, [&](size_t i) {
@@ -371,6 +374,10 @@ sequence<Tint> get_counts(slice<Iterator, Iterator> In, Get_Key const &g, size_t
 
 template <typename Tint = size_t, typename Iterator, typename Get_Key>
 auto integer_sort_with_counts(slice<Iterator, Iterator> In, Get_Key const &g, size_t num_buckets) {
+  using T = typename slice<Iterator, Iterator>::value_type;
+  if (In.size() == 0) {
+    return std::make_pair(parlay::sequence<T>{}, parlay::sequence<Tint>(num_buckets));
+  }
   assert(num_buckets > 0);
   size_t bits = log2_up(num_buckets);
   auto R = integer_sort(In, g, bits);

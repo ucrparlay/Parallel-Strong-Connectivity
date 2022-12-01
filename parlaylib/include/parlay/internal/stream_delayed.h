@@ -1,5 +1,7 @@
 #include <cstddef>
 #include <iterator>
+#include <type_traits>
+#include <utility>        // IWYU pragma: keep
 
 #include "../sequence.h"
 #include "../utilities.h"
@@ -67,8 +69,22 @@ struct forward_delayed_sequence {
 template <typename Seq1, typename Seq2, typename F>
 auto zip_with(Seq1 &S1, Seq2 &S2, F f) {
   struct iter {
+
+// Clang incorrectly warns that these type aliases are unused
+#if defined(__clang__)
+#if __has_warning("-Wunused-local-typedef")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif  // __has_warning("-Wunused-local-typedef")
+#endif  // __clang__
     using iter1_t = decltype(S1.begin());
     using iter2_t = decltype(S2.begin());
+#if defined(__clang__)
+#if __has_warning("-Wunused-local-typedef")
+#pragma clang diagnostic pop
+#endif  // __has_warning("-Wunused-local-typedef")
+#endif  // __clang__
+
     using value_type = decltype(f(*(S1.begin()),*(S2.begin())));
     F g;
     iter1_t iter1;
@@ -141,7 +157,8 @@ void apply(const Seq &a, F f) {
 
 template <typename Seq1, typename Seq2, typename F>
 void zip_apply(const Seq1 &s1, const Seq2 &s2, F f) {
-  for (auto i1 = s1.begin(), i2 = s2.begin(); i1 != s1.end(); ++i1, ++i2)
+  auto i1 = s1.begin();
+  for (auto i2 = s2.begin(); i1 != s1.end(); ++i1, ++i2)
     f(*i1,*i2);
 }
 
@@ -157,6 +174,27 @@ auto filter_map(const SeqIn &In, F f, G g) {
     auto val = *s;
     if (f(val)) {
       *out_iter = g(val);
+      ++out_iter;
+    }
+  }
+  size_t m = out_iter - tmp_out.begin();
+  auto result = parlay::sequence<T>::uninitialized(m);
+  for (size_t i=0; i < m; i++)
+    assign_uninitialized(result[i], std::move(tmp_out[i]));
+  return result;
+}
+
+  // allocates own temporary space, returns just filtered sequence
+template <typename SeqIn, typename F>
+auto filter_op(const SeqIn &In, F f) {
+  size_t n = In.size();
+  using T = typename std::remove_reference<decltype(f(*(In.begin())).value())>::type;
+  auto tmp_out = parlay::internal::uninitialized_sequence<T>(n);
+  auto out_iter = tmp_out.begin();
+  for (auto s = In.begin(); s != In.end(); ++s) {
+    auto opt_val = f(*s);
+    if (opt_val) {
+      *out_iter = opt_val.value();
       ++out_iter;
     }
   }

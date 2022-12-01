@@ -20,7 +20,7 @@ inline size_t worker_id();
 
 // parallel loop from start (inclusive) to end (exclusive) running
 // function f.
-//    f should map long to void.
+//    f should map size_t to void.
 //    granularity is the number of iterations to run sequentially
 //      if 0 (default) then the scheduler will decide
 //    conservative uses a safer scheduler
@@ -41,8 +41,11 @@ inline void par_do(Lf left, Rf right, bool conservative = false);
 //****************************************************
 
 // Cilk Scheduler
-#if defined(PARLAY_CILK)
-#include "internal/scheduler_plugins/cilk.h"        // IWYU pragma: keep, export
+#if defined(PARLAY_CILKPLUS)
+#include "internal/scheduler_plugins/cilkplus.h"    // IWYU pragma: keep, export
+
+#elif defined(PARLAY_OPENCILK)
+#include "internal/scheduler_plugins/opencilk.h"    // IWYU pragma: keep, export
 
 // OpenMP Scheduler
 #elif defined(PARLAY_OPENMP)

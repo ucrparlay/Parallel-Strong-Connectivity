@@ -5,7 +5,10 @@
 
 #include "gtest/gtest.h"
 
+#include <parlay/alloc.h>
 #include <parlay/sequence.h>
+#include <parlay/primitives.h>
+#include <parlay/type_traits.h>
 #include <parlay/utilities.h>
 
 // Sequences should be trivially relocatable provided that they
@@ -16,10 +19,12 @@ static_assert(parlay::is_trivially_relocatable_v<parlay::short_sequence<int, std
 static_assert(parlay::is_trivially_relocatable_v<parlay::short_sequence<int, parlay::allocator<int>>>);
 
 // With GNU packed structs, everything should fit into 16 bytes.
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__MINGW64__)
 static_assert(sizeof(parlay::sequence<int>) <= 16);
 static_assert(sizeof(parlay::short_sequence<int>) <= 16);
 #endif
+
+static_assert(alignof(parlay::sequence<int>) >= 8);
 
 
 TEST(TestSequence, TestDefaultConstruct) {
@@ -416,6 +421,15 @@ TEST(TestSequence, TestInsert) {
   ASSERT_EQ(s, s2);
 }
 
+TEST(TestSequence, TestInsertRef) {
+  auto s = parlay::sequence<int>{1,2,4,5};
+  auto s2 = parlay::sequence<int>{1,2,3,4,5};
+  ASSERT_FALSE(s.empty());
+  int x = 3;
+  s.insert(s.begin() + 2, x);
+  ASSERT_EQ(s, s2);
+}
+
 TEST(TestSequence, TestInsertMove) {
   auto s = parlay::sequence<std::unique_ptr<int>>{};
   s.emplace_back(std::make_unique<int>(1));
@@ -625,6 +639,30 @@ TEST(TestSequence, TestCutConst) {
   ASSERT_TRUE(std::equal(s2.begin(), s2.end(), ss.begin()));
 }
 
+TEST(TestSequence, TestSubstrToEnd) {
+  const auto s = parlay::sequence<int>{1,2,3,4,5,6,7,8,9};
+  const auto s2 = parlay::sequence<int>{4,5,6,7,8,9};
+  auto ss = s.substr(3);
+  ASSERT_EQ(ss.size(), 6);
+  ASSERT_TRUE(std::equal(s2.begin(), s2.end(), ss.begin()));
+}
+
+TEST(TestSequence, TestSubstr) {
+  const auto s = parlay::sequence<int>{1,2,3,4,5,6,7,8,9};
+  const auto s2 = parlay::sequence<int>{4,5,6,7};
+  auto ss = s.substr(3,4);
+  ASSERT_EQ(ss.size(), 4);
+  ASSERT_TRUE(std::equal(s2.begin(), s2.end(), ss.begin()));
+}
+
+TEST(TestSequence, TestSubseq) {
+  const auto s = parlay::sequence<int>{1,2,3,4,5,6,7,8,9};
+  const auto s2 = parlay::sequence<int>{4,5,6,7};
+  auto ss = s.subseq(3,7);
+  ASSERT_EQ(ss.size(), 4);
+  ASSERT_TRUE(std::equal(s2.begin(), s2.end(), ss.begin()));
+}
+
 TEST(TestSequence, TestHeadConst) {
   auto s = parlay::sequence<int>{1,2,3,4,5,6,7,8,9};
   auto s2 = parlay::sequence<int>{1,2,3,4,5};
@@ -798,6 +836,26 @@ TEST(TestSequence, TestNonDefaultConstructibleType) {
   }
 }
 
+TEST(TestSequence, TestCopyElisionFromFunction) {
+  struct foo {
+    std::atomic<int> x, y;
+  };
+  static_assert(!std::is_copy_constructible_v<foo>);
+  static_assert(!std::is_move_constructible_v<foo>);
+
+  // foo is not copy or move constructible, so this will only
+  // work if copy elision succeeds in directly constructing
+  // the foo straight into the sequence
+  auto s = parlay::sequence<foo>::from_function(100000, [](int i) {
+    return foo{i, i+1};
+  });
+
+  for (size_t i = 0; i < s.size(); i++) {
+    ASSERT_EQ(s[i].x.load(), i);
+    ASSERT_EQ(s[i].y.load(), i+1);
+  }
+}
+
 struct NonStandardLayout {
   int x;
   NonStandardLayout(int _x) : x(_x) { }
@@ -829,6 +887,17 @@ TEST(TestSequence, TestGetAllocator) {
   parlay::sequence<int, std::allocator<int>> s;
   auto alloc = s.get_allocator();
   ASSERT_EQ(alloc, std::allocator<int>());
+}
+
+TEST(TestSequence, TestLessThan) {
+  auto s = parlay::sequence<int>{1,2,3,4,5,6,7,8,9};
+  auto s2 = parlay::sequence<int>{1,2,3,4,5};
+  auto s3 = parlay::sequence<int>{1,2,3,4,5,6,7,8,10};
+  auto s4 = parlay::sequence<int>{1,2,3,4,6};
+
+  ASSERT_LT(s2, s);
+  ASSERT_LT(s, s3);
+  ASSERT_LT(s, s4);
 }
 
 // TODO: More thorough tests with custom allocators
