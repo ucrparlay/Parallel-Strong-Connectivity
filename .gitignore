@@ -6,3 +6,4 @@
 *.dat
 *.txt
 *.bin
+scripts/*.py
