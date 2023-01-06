@@ -94,7 +94,6 @@ int main(int argc, char** argv) {
   bool local_scc = P.getOption("-local_scc");
   _min_bag_size_ = P.getOptionInt("-lambda", 1 << 10);
   tau = P.getOptionInt("-tau", 512);
-  // per_core = P.getOptionInt("-per_core", 100000000);
   cout << "tau " << tau  << endl;
   t1.stop();
   cout << "input graph: " << fileName << endl;
