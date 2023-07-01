@@ -6,4 +6,5 @@
 *.dat
 *.txt
 *.bin
-scripts/*.py
+data/dir/*.bin
+data/sym/*.bin

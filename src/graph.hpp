@@ -1,15 +1,10 @@
 #pragma once
 
 #include <fcntl.h>
-#include <malloc.h>
-#include "parlay/parallel.h"
-// #include "../parlaylib/include/parlay/parallel.h"
-#include "parlay/primitives.h"
-// #include "../parlaylib/include/parlay/primitives.h"
-#include "parlay/random.h"
-// #include "../parlaylib/include/parlay/random.h"
-#include "parlay/sequence.h"
-// #include "../parlaylib/include/parlay/sequence.h"
+#include <parlay/parallel.h>
+#include <parlay/primitives.h>
+#include <parlay/sequence.h>
+#include <parlay/random.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -249,147 +244,9 @@ void make_directed(Graph& graph) {
   });
 }
 
-void read_knn(const char* const fileName, const char* const OutFileName,
-              int k) {
-  ifstream file(fileName, ifstream::in | ifstream::binary | ifstream::ate);
-  // if (!file.is_open()) {
-  //   cerr << "Error: Cannot open file " << fileName << '\n';
-  //   abort();
-  // }
-  // NodeId a, b;
-  // vector<edge> out_list;
-  // while (file >> a >> b)
-  // {
-  //   cout << a << "," << b << endl;
-  //   out_list.push_back(edge(a,b));
-  // }
-  // file.close();
-  if (!file.is_open()) {
-    cerr << "Error: Cannot open file " << fileName << '\n';
-    abort();
-  }
-  long end = file.tellg();
-  file.seekg(0, file.beg);
-  long length = end - file.tellg();
-
-  sequence<char> strings(length + 1);
-  file.read(strings.begin(), length);
-  file.close();
-
-  sequence<bool> flag(length);
-  parallel_for(0, length, [&](size_t i) {
-    if (is_space(strings[i])) {
-      strings[i] = 0;
-    }
-  });
-  flag[0] = strings[0];
-  parallel_for(1, length, [&](size_t i) {
-    if (is_space(strings[i - 1]) && !is_space(strings[i])) {
-      flag[i] = true;
-    } else {
-      flag[i] = false;
-    }
-  });
-
-  auto offset_seq = pack_index(flag);
-  sequence<char*> words(offset_seq.size());
-  parallel_for(0, offset_seq.size(),
-               [&](size_t i) { words[i] = strings.begin() + offset_seq[i]; });
-
-  Graph graph;
-  size_t m = offset_seq.size() / 2;
-  size_t n = m / k;
-  graph.n = n;
-  graph.m = m;
-  cout << "n " << n << endl;
-  cout << "m " << m << endl;
-  sequence<edge> edge_list = sequence<edge>(m);
-  parallel_for(0, m, [&](size_t i) {
-    NodeId u = atol(words[2 * i]);
-    NodeId v = atol(words[2 * i + 1]);
-    edge_list[i] = edge(u, v);
-  });
-  sort_inplace(edge_list);
-  // for (size_t i = 0; i<m; i++){
-  //   cout << edge_list[i].u << ", " << edge_list[i].v << endl;
-  // }
-
-  graph.offset = sequence<EdgeId>(graph.n + 1);
-  graph.E = sequence<NodeId>(graph.m);
-  parallel_for(0, graph.n + 1, [&](size_t i) { graph.offset[i] = 0; });
-  parallel_for(0, graph.m, [&](size_t i) {
-    NodeId u = edge_list[i].u;
-    NodeId v = edge_list[i].v;
-    graph.E[i] = v;
-    if (i == 0 || edge_list[i - 1].u != u) {
-      graph.offset[u] = i;
-    }
-    if (i == graph.m - 1 || edge_list[i + 1].u != u) {
-      size_t end = (i == graph.m - 1 ? (graph.n + 1) : edge_list[i + 1].u);
-      parallel_for(u + 1, end, [&](size_t j) { graph.offset[j] = i + 1; });
-    }
-  });
-  // cout << "offset"<< endl;
-  // for (int i = 0; i<10; i++){
-  //   cout << graph.offset[i] << endl;
-  // }
-  // cout << "E" << endl;
-  // for (int i = 0; i<10; i++){
-  //   cout << graph.E[i] <<endl;
-  // }
-  std::string out_name = OutFileName;
-  out_name += ".bin";  // C++11 for std::to_string   ofstream ofs(fileName);
-  ofstream ofs(out_name);
-  size_t sizes = (graph.n + 1) * 8 + graph.m * 4 + 3 * 8;
-  ofs.write(reinterpret_cast<char*>(&graph.n), sizeof(size_t));
-  ofs.write(reinterpret_cast<char*>(&graph.m), sizeof(size_t));
-  ofs.write(reinterpret_cast<char*>(&sizes), sizeof(size_t));
-  ofs.write(reinterpret_cast<char*>((graph.offset).data()), (graph.n + 1) * 8);
-  ofs.write(reinterpret_cast<char*>((graph.E).data()), graph.m * 4);
-  ofs.close();
-  // symmetric graph
-  make_symmetric(graph);
-  out_name = OutFileName;
-  out_name += "_sym.bin";  // C++11 for std::to_string   ofstream ofs(fileName);
-  ofstream ofs_sym(out_name);
-  sizes = (graph.n + 1) * 8 + graph.m * 4 + 3 * 8;
-  ofs_sym.write(reinterpret_cast<char*>(&graph.n), sizeof(size_t));
-  ofs_sym.write(reinterpret_cast<char*>(&graph.m), sizeof(size_t));
-  ofs_sym.write(reinterpret_cast<char*>(&sizes), sizeof(size_t));
-  ofs_sym.write(reinterpret_cast<char*>((graph.offset).data()),
-                (graph.n + 1) * 8);
-  ofs_sym.write(reinterpret_cast<char*>((graph.E).data()), graph.m * 4);
-  ofs_sym.close();
-}
-
-Graph generate_synthetic_graph(size_t n, size_t k) {
-  Graph graph;
-  graph.n = n;
-  graph.m = n * k;
-  printf("n=%zu, m=%zu\n", graph.n, graph.m);
-  graph.symmetric = true;
-  graph.offset = sequence<EdgeId>(graph.n + 1);
-  graph.E = sequence<NodeId>(graph.m);
-  auto perm = random_permutation(graph.n);
-  parallel_for(0, n + 1, [&](size_t i) { graph.offset[i] = i * k; });
-  parallel_for(0, n, [&](size_t i) {
-    NodeId u = perm[i];
-    assert(graph.offset[u + 1] - graph.offset[u] == k);
-    for (size_t j = graph.offset[u]; j < graph.offset[u + 1]; j++) {
-      graph.E[j] = perm[(i + 1 + j - graph.offset[u]) % n];
-    }
-  });
-  return graph;
-}
 
 Graph read_graph(char* filename, bool enable_mmap = true,
                  bool symmetric = false) {
-  if (strcmp(filename, "synthetic") == 0) {
-    size_t n = 3563602789, k = 63;
-    return generate_synthetic_graph(n, k);
-  }
-  // cout << "enable_mmap " << enable_mmap << endl;
-  // cout << "symmetric " << symmetric << endl;
   string str_filename = string(filename);
   size_t idx = str_filename.find_last_of('.');
   if (idx == string::npos) {
@@ -485,26 +342,3 @@ Graph read_large_sym_graph(char* filename) {
   ifs.close();
   return graph;
 }
-
-// void write_array_to_csv(char* filename, sequence<NodeId>& arr, size_t n) {
-//   char* csv = (char*)".csv";
-//   char csvFile[strlen(csv) + strlen(filename) + 1];
-//   csvFile[0] = '\0';
-//   strcat(csvFile, filename);
-//   strcat(csvFile, csv);
-
-//   ofstream file(csvFile, ios::out | ios::binary);
-//   if (!file.is_open()) {
-//     std::cout << "Unable to open file: " << csvFile << std::endl;
-//     abort();
-//   }
-//   cout << "write to csv file: " << csvFile << endl;
-//   file << "ldd label" << endl;
-//   char buffer[50];
-//   for (size_t i = 0; i < n; i++) {
-//     sprintf(buffer, "%u", arr[i]);
-//     file << buffer << endl;
-//   }
-
-//   file.close();
-// }
