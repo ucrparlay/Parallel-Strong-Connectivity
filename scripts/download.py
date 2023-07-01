@@ -26,3 +26,7 @@ if __name__ == '__main__':
 # wget -c -O ./data/soc-LiveJournal1_sym.bin "https://www.dropbox.com/s/6mbmwerbzqa0cc1/soc-LiveJournal1_sym.bin?dl=1"
 
 # wget -c -O ./data/GeoLifeNoScale_5.bin "https://www.dropbox.com/s/6jcqocm225wfvdg/GeoLifeNoScale_5.bin?dl=1"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 42c16ff60fd978ad5877273dfebdd7d453504ba8

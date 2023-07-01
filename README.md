@@ -46,7 +46,7 @@ You can also download graphs manually from this link [google drive](https://driv
 
 We use the `.bin` binary graph format from [GBBS](https://github.com/ParAlg/gbbs).
 
-We comment out `ClueWeb`, `Hyperlink2014` and `Hyperlink2012`, since their large sizes (166GB, 253GB and 1013GB) are too large to fit in dropbox. If you want to run these graphs, you can contact us and run on our server. To run them on our server, just uncomment them in `./scripts/graphs.py`. 
+We comment out `clueweb`, `hyperlink2014` and `hyperlink2012`, since their large sizes (166GB, 253GB and 1013GB) are too large to fit in dropbox. If you want to run these graphs, you can contact us and run on our server. To run them on our server, just uncomment them in `./scripts/graphs.py`. 
 
 <!-- For ClueWeb, it is too large to fit in dropbox. You can find it at [Web Data Commons](http://webdatacommons.org/hyperlinkgraph/). -->
 
@@ -111,3 +111,4 @@ If you are running our code on a machine with more than one socket, **numactl** 
 ```shell
 numactl -i all ./scc [input_graph]  
 ```
+
