@@ -1,8 +1,65 @@
 Parallel-Strong-Connectivity 
 ====================== 
-This repository includes the implementations of strongly connected components, connectivity, and least-element Lists (LE-Lists). Part of our primitives are from a public repository [GBBS](https://github.com/ParAlg/gbbs), which is derived from [pbbslib](https://github.com/cmuparlay/pbbslib).  
+This repository contains code for our paper "Parallel Strong Connectivity based on Faster Reachability" in [SIGMOD '23](https://dl.acm.org/doi/10.1145/3589259). It includes the implementations of strongly connected components, connectivity, and least-element Lists (LE-Lists). Part of our primitives are from a public repository [GBBS](https://github.com/ParAlg/gbbs), which is derived from [pbbslib](https://github.com/cmuparlay/pbbslib).  
 
-## Developing 
+
+
+
+## Deployment
+
+### Requirements 
+
+- Multi-processor machine (tested on CentOS 8 and MacOS 10 & 13)
+
+* g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
+
+> **_NOTE:_**  It does not compile with g++-8, which is a known bug that we are working on. It works with g++-7, g++-9, g++-11, and g++-12.  
+
+- python3 (used to run scripts)
+- We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
+- We include the baselines in the folder `baselines`
+
+### Get Started
+
+Code download:
+
+```
+git clone git@github.com:ucrparlay/Parallel-Strong-Connectivity.git
+```
+<!-- 
+We provide 3 small directed graphs as examples. They are located in `./data/directed`. Run the following commands to check if the deployment was successful:
+
+```
+make -j
+python3 scripts/test.py
+``` -->
+
+### Download Graphs
+
+- Download the all graphs to `./data`
+
+  ``` python3 scripts/download.py```
+
+These command will download the directed graphs to `./data/dir` and undirected graphs to `./data/sym` that are used in this paper. It not download successful because of the band width limitation of dropbox. You can try to download them another day.
+
+You can also download graphs manually from this link [google drive](https://drive.google.com/drive/folders/1ZuhfaLmdL-EyOiWYqZGD1rOy_oSFRWe4?usp=sharing).
+
+We use the `.bin` binary graph format from [GBBS](https://github.com/ParAlg/gbbs).
+
+We comment out `clueweb`, `hyperlink2014` and `hyperlink2012`, since their large sizes (166GB, 253GB and 1013GB) are too large to fit in dropbox. If you want to run these graphs, you can contact us and run on our server. To run them on our server, just uncomment them in `./scripts/graphs.py`. 
+
+<!-- For ClueWeb, it is too large to fit in dropbox. You can find it at [Web Data Commons](http://webdatacommons.org/hyperlinkgraph/). -->
+
+
+## Reproducibility
+
+## Replicability
+
+
+
+
+
+## Developing
 
 ### Prerequisites 
 * g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
@@ -54,3 +111,4 @@ If you are running our code on a machine with more than one socket, **numactl** 
 ```shell
 numactl -i all ./scc [input_graph]  
 ```
+

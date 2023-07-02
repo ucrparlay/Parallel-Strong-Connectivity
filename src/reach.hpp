@@ -16,8 +16,7 @@
 
 using namespace std;
 
-size_t tau = 1024;
-size_t per_core = 10000;
+size_t tau;
 
 class REACH {
  private:
@@ -113,8 +112,9 @@ bool REACH::judge() {
 }
 
 size_t REACH::sparse_update(sequence<bool>& dst, bool local) {
-  size_t queue_front = ceil(per_core * num_workers() / n_front);
-  size_t queue_size = min(queue_front, tau);
+  // size_t queue_front = ceil(per_core * num_workers() / n_front);
+  // size_t queue_size = min(queue_front, tau);
+  size_t queue_size = tau;
   parallel_for(
       0, n_front,
       [&](size_t i) {
@@ -206,7 +206,6 @@ EdgeId REACH::dense_sample(NodeId rand_seed) {
 }
 
 void REACH::reach(NodeId source, sequence<bool>& dst, bool local) {
-  cout << "reach_tau " << tau << endl;
   parallel_for(0, graph.n, [&](NodeId i) { dst[i] = false; });
   front[0] = source;
   dst[source] = true;
