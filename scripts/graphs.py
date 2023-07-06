@@ -5,7 +5,7 @@
 dir_graphs = {
     # Social Graphs
     "LJ": ('soc-LiveJournal1', ),
-    "TW": ('twitter', ),
+    # "TW": ('twitter', ),
 
     # Web Graphs
     # "SD": ('sd_arc', ),

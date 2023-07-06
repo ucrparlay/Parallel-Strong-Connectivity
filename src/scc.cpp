@@ -8,52 +8,7 @@
 
 using namespace std;
 
-// void SCC_checker(size_t* label, long n){
-//     edge * edge_list = (edge*)malloc(sizeof(edge)*n);
-//     std::vector<edge> hash_vec;  // (component_size,hash_sum)
-//     cilk_for(auto i = 0; i<n; i++){
-//         edge_list[i]=edge(label[i],i);
-//     }
-//     quickSort(edge_list, n, edgeCmp());
-//     uintT hash_sum = 0;
-//     uintT count = 0;
-//     for (auto i = 0; i<n-1; i++){
-//         hash_sum += hashInt(edge_list[i].v);
-//         count ++;
-//         if (edge_list[i].u != edge_list[i+1].u){
-//             hash_vec.push_back(edge(count,hash_sum));
-//             hash_sum = 0;
-//             count = 0;
-//         }
-//     }
-//     hash_sum += hashInt(edge_list[n-1].v);
-//     count ++;
-//     hash_vec.push_back(edge(count, hash_sum));
-//     sort(hash_vec.begin(), hash_vec.end(), edgeCmp());
 
-//     cout << "n_scc = " << hash_vec.size() << endl;
-//     cout << "Largest StronglyConnectedComponents has " <<
-//     hash_vec[hash_vec.size()-1].u << " vertices" << endl;
-
-//     hash_sum = 0;
-//     for (auto iter = hash_vec.begin(); iter != hash_vec.end(); iter++){
-//         // std::cout << std::to_string(iter->u) << " " <<
-//         std::to_string(iter->v) << std::endl; hash_sum +=
-//         hashInt(hashInt(iter->u)+hashInt(iter->v));
-//     }
-//     std::cout<< "hash_code " << hash_sum << std::endl;
-
-//     std::cout << "first largest SCC's size " << hash_vec[hash_vec.size()-1].u
-//     << " hash_code " << hash_vec[hash_vec.size()-1].v << std::endl; std::cout
-//     << "third largest SCC's size " << hash_vec[hash_vec.size()-3].u << "
-//     hash_code " << hash_vec[hash_vec.size()-3].v << std::endl; std::cout <<
-//     "fifth largest SCC's size " << hash_vec[hash_vec.size()-5].u << "
-//     hash_code " << hash_vec[hash_vec.size()-5].v << std::endl; std::cout <<
-//     "ninth largest SCC's size " << hash_vec[hash_vec.size()-9].u << "
-//     hash_code " << hash_vec[hash_vec.size()-9].v << std::endl;
-
-//     free (edge_list);
-// }
 
 void SCC_status(sequence<size_t> label, size_t n) {
   // uintT* flag = new uintT[n+1];
