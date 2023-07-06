@@ -98,7 +98,7 @@ And run all three applications (SCC, Connectivity, LE-lists) with:
 ```
 Then the result will be save in the ``result/`` folder.  
 
-### Building
+## Building
 Alternatively, users can compile the code on their own. A makefile is given under the folder ``src/``, you can compile the code by:  
 ```shell
 make 
