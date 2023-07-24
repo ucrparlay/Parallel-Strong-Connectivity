@@ -2,13 +2,14 @@
 # If you want to download other graphs, you can uncomment the corresponding line,
 # but may not download successful because of the band width limitation of dropbox.
 # You can try to download them another day.
+
 dir_graphs = {
     # Social Graphs
     "LJ": ('soc-LiveJournal1', ),
-    # "TW": ('twitter', ),
+    "TW": ('twitter', ),
 
     # Web Graphs
-    # "SD": ('sd_arc', ),
+    "SD": ('sd_arc', ),
     # "CW": ('clueweb', ),
     # "HL14": ('hyperlink2014',),
     # "HL12": ('hyperlink2012', ),
@@ -17,17 +18,17 @@ dir_graphs = {
     "HH5": ('Household.lines_5', ),
     "CH5": ('CHEM_5', ),
     "GL2": ('GeoLifeNoScale_2',),
-    # "GL5": ('GeoLifeNoScale_5',),
-    # "GL10": ('GeoLifeNoScale_10',),
-    # "GL15": ('GeoLifeNoScale_15', ),
-    # "GL20": ('GeoLifeNoScale_20', ),
-    # "COS5": ('Cosmo50_5', ),
+    "GL5": ('GeoLifeNoScale_5',),
+    "GL10": ('GeoLifeNoScale_10',),
+    "GL15": ('GeoLifeNoScale_15', ),
+    "GL20": ('GeoLifeNoScale_20', ),
+    "COS5": ('Cosmo50_5', ),
 
     # Lattice Graphs
-    # "SQR": ('grid_4000_4000', ),
-    # "REC": ('grid_1000_10000',),
-    # "SQR'": ('grid_4000_4000_03', ),
-    # "REC'": ('grid_1000_10000_03',),
+    "SQR": ('grid_4000_4000', ),
+    "REC": ('grid_1000_10000',),
+    "SQR'": ('grid_4000_4000_03', ),
+    "REC'": ('grid_1000_10000_03',),
 }
 
 sym_graphs = {
@@ -55,10 +56,10 @@ sym_graphs = {
     "GL10": ('GeoLifeNoScale_10_sym', ),
     "GL15": ('GeoLifeNoScale_15_sym', ),
     "GL20": ('GeoLifeNoScale_20_sym', ),
-    # "COS5": ('Cosmo50_5_sym', 'https://www.dropbox.com/s/8oxqut1ff7l73ws/Cosmo50_5_sym.bin?dl=0'),
+    "COS5": ('Cosmo50_5_sym', 'https://www.dropbox.com/s/8oxqut1ff7l73ws/Cosmo50_5_sym.bin?dl=0'),
 
     # Lattice Graphs
-    "SQR": ('grid_4000_400_sym', ),
+    "SQR": ('grid_4000_4000_sym', ),
     "REC": ('grid_1000_10000_sym',),
     "SQR'": ('grid_4000_4000_03_sym', ),
     "REC'": ('grid_1000_10000_03_sym',),

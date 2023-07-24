@@ -7,6 +7,8 @@ import subprocess
 import os
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# GRAPH_DIR = f"{CURRENT_DIR}/../data/dir"
+GRAPH_DIR = "/ssd0/graphs/links"
 subprocess.call(f'mkdir {CURRENT_DIR}/../log/exp1', shell=True)
 # Parallel Running Time
 def run_parallel():
@@ -16,7 +18,7 @@ def run_parallel():
     for key, val in dir_graphs.items():
         graph = val[0]
         scc = f'{CURRENT_DIR}/../src/scc'
-        graph_in = f"{CURRENT_DIR}/../data/dir/{graph}.bin"
+        graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}.out"
         print(f"Running {key}")
         cmd = f"numactl -i all {scc} {graph_in} -local_reach -local_scc > {log_out}"
@@ -53,7 +55,6 @@ def run_GBBS():
     for key, val in dir_graphs.items():
         graph=val[0]
         graph_in = f"{CURRENT_DIR}/../data/dir{graph}.bin"
-        # cmd= f"$cd {CURRENT_DIR}/../baselines/gbbs && numactl -i all bazel run ${alg} -- -b -beta 1.5 ${graph_in}"
         cmd= f"$cd {CURRENT_DIR}/../baselines/gbbs && bazel run ${alg} -- -b -beta 1.5 ${graph_in}"
         subprocess.call(cmd, shell=True)
 
