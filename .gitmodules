@@ -5,3 +5,6 @@
 	path = baselines/gbbs
 	url = git@github.com:LottieWang/gbbs.git
 	branch = baseline
+[submodule "baselines/MultiStep"]
+	path = baselines/MultiStep
+	url = git@github.com:LottieWang/Connectivity.git

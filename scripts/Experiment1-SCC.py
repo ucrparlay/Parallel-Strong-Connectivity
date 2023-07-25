@@ -3,13 +3,19 @@
 # and also the sequential running time with only one core.
 # The directed output of executing the code will be output to folder '../log/exp1'
 from graphs import dir_graphs
+from graphs import GRAPH_DIR
 import subprocess
 import os
 
+DIR_GRAPH_DIR=f"{GRAPH_DIR}"
+# DIR_GRAPH_DIR=f"{GRAPH_DIR}/dir"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# GRAPH_DIR = f"{CURRENT_DIR}/../data/dir"
-GRAPH_DIR = "/ssd0/graphs/links"
-subprocess.call(f'mkdir {CURRENT_DIR}/../log/exp1', shell=True)
+if not os.path.exists(f"{CURRENT_DIR}/../log"):
+    subprocess.call(f"mkdir {CURRENT_DIR}/../log", shell=True)
+if not os.path.exists(f"{CURRENT_DIR}/../log/exp1"):
+    subprocess.call(f'mkdir {CURRENT_DIR}/../log/exp1', shell=True)
+par_rounds = 10
+seq_rounds = 1
 # Parallel Running Time
 def run_parallel():
     print("Testing Our Parallel SCC Running Time")
@@ -18,10 +24,10 @@ def run_parallel():
     for key, val in dir_graphs.items():
         graph = val[0]
         scc = f'{CURRENT_DIR}/../src/scc'
-        graph_in = f"{GRAPH_DIR}/{graph}.bin"
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}.out"
         print(f"Running {key}")
-        cmd = f"numactl -i all {scc} {graph_in} -local_reach -local_scc > {log_out}"
+        cmd = f"numactl -i all {scc} {graph_in} -local_reach -local_scc -t {par_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_serial():
@@ -31,10 +37,10 @@ def run_serial():
     for key, val in dir_graphs.items():
         graph = val[0]
         scc = f'{CURRENT_DIR}/../src/scc'
-        graph_in = f"{CURRENT_DIR}/../data/dir/{graph}.bin"
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_seq.out"
         print(f"Running {key}")
-        cmd = f"{scc} {graph_in} -local_reach -local_scc > {log_out}"
+        cmd = f"{scc} {graph_in} -local_reach -local_scc -t {seq_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_Tarjan():
@@ -43,22 +49,48 @@ def run_Tarjan():
     for key, val in dir_graphs.items():
         graph = val[0]
         scc = f'{CURRENT_DIR}/../baselines/tarjan_scc/tarjan_scc'
-        graph_in = f"{CURRENT_DIR}/../data/dir/{graph}.bin"
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_tarjan.out"
         print(f"Running {key}")
-        cmd = f"{scc} {graph_in} > {log_out}"
+        cmd = f"{scc} {graph_in} -t {seq_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_GBBS():
     print("Testing SCC Baselines: Parallel GBBS")
-    alg = "//benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16:StronglyConnectedComponents_main"
+    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16"
+    subprocess.call(f"cd {GBBS_DIR} && make -B", shell=True)
+    scc = f"{GBBS_DIR}/StronglyConnectedComponents"
     for key, val in dir_graphs.items():
         graph=val[0]
-        graph_in = f"{CURRENT_DIR}/../data/dir{graph}.bin"
-        cmd= f"$cd {CURRENT_DIR}/../baselines/gbbs && bazel run ${alg} -- -b -beta 1.5 ${graph_in}"
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs.out"
+        cmd= f"numactl -i all {scc} -b -beta 1.5 -rounds {par_rounds} {graph_in} | tee -a {log_out}"
+        subprocess.call(cmd, shell=True)
+def run_GBBS_serial():
+    print("Testing SCC Baselines: Parallel GBBS")
+    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16"
+    subprocess.call(f"cd {GBBS_DIR} && make SERIAL=1 -B", shell=True)
+    scc = f"{GBBS_DIR}/StronglyConnectedComponents"
+    for key, val in dir_graphs.items():
+        graph=val[0]
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs_seq.out"
+        cmd= f"{scc} -b -beta 1.5 -rounds {seq_rounds} {graph_in} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
+def run_MultiStep():
+    print("Testing SCC Baselines: Parallal Multi-Step")
+    MultiStep_DIR = f"{CURRENT_DIR}/../baselines/MultiStep/multistep"
+    subprocess.call(f"cd {MultiStep_DIR} && make -B", shell=True)
+    scc = f"{MultiStep_DIR}/scc"
+    for key, val in dir_graphs.items():
+        graph=val[0]
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp1/{key}_multistep.out"
+        cmd= f"numactl -i all {scc} {graph_in} -t {par_rounds} | tee -a {log_out}"
+        subprocess.call(cmd, shell=True)
 # run_parallel()
 # run_serial()
 # run_Tarjan()
-run_GBBS()
+# run_GBBS_serial()
+run_MultiStep()

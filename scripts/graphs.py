@@ -2,7 +2,10 @@
 # If you want to download other graphs, you can uncomment the corresponding line,
 # but may not download successful because of the band width limitation of dropbox.
 # You can try to download them another day.
-
+import os
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# GRAPH_DIR = f"{CURRENT_DIR}/../data"
+GRAPH_DIR = "/ssd0/graphs/links"
 dir_graphs = {
     # Social Graphs
     "LJ": ('soc-LiveJournal1', ),
