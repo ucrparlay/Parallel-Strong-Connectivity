@@ -21,9 +21,9 @@ def run_parallel():
     print("Testing Our Parallel SCC Running Time")
     subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B -j', shell=True)
     # For each experiment, run 11 times and take the average of the last 10 time
+    scc = f'{CURRENT_DIR}/../src/scc'
     for key, val in dir_graphs.items():
         graph = val[0]
-        scc = f'{CURRENT_DIR}/../src/scc'
         graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}.out"
         print(f"Running {key}")
@@ -34,9 +34,9 @@ def run_serial():
     print("Testing Our Sequential SCC Running Time")
     subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B SERIAL=1 -j', shell=True)
     # For each experiment, run 11 times and take the average of the last 10 time
+    scc = f'{CURRENT_DIR}/../src/scc'
     for key, val in dir_graphs.items():
         graph = val[0]
-        scc = f'{CURRENT_DIR}/../src/scc'
         graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_seq.out"
         print(f"Running {key}")
@@ -46,9 +46,9 @@ def run_serial():
 def run_Tarjan():
     print("Testing SCC Baselines: Tarjan's Algorithm")
     subprocess.call(f'cd {CURRENT_DIR}/../baselines/tarjan_scc && make SERIAL=1 -B', shell=True)
+    scc = f'{CURRENT_DIR}/../baselines/tarjan_scc/tarjan_scc'
     for key, val in dir_graphs.items():
         graph = val[0]
-        scc = f'{CURRENT_DIR}/../baselines/tarjan_scc/tarjan_scc'
         graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_tarjan.out"
         print(f"Running {key}")
