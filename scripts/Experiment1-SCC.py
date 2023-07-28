@@ -6,16 +6,15 @@ from graphs import dir_graphs
 from graphs import GRAPH_DIR
 import subprocess
 import os
+import multiprocessing
 
 DIR_GRAPH_DIR=f"{GRAPH_DIR}"
-# DIR_GRAPH_DIR=f"{GRAPH_DIR}/dir"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-if not os.path.exists(f"{CURRENT_DIR}/../log"):
-    subprocess.call(f"mkdir {CURRENT_DIR}/../log", shell=True)
-if not os.path.exists(f"{CURRENT_DIR}/../log/exp1"):
-    subprocess.call(f'mkdir {CURRENT_DIR}/../log/exp1', shell=True)
-par_rounds = 10
-seq_rounds = 1
+os.makedirs(f"{CURRENT_DIR}/../log", exist_ok=True)  
+os.makedirs(f"{CURRENT_DIR}/../log/exp1", exist_ok=True)  
+
+global par_rounds
+global seq_rounds
 # Parallel Running Time
 def run_parallel():
     print("Testing Our Parallel SCC Running Time")
@@ -52,7 +51,7 @@ def run_Tarjan():
         graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_tarjan.out"
         print(f"Running {key}")
-        cmd = f"{scc} {graph_in} -t {seq_rounds} | tee -a {log_out}"
+        cmd = f"ulimit -s unlimited && {scc} {graph_in} -t {seq_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_GBBS():
@@ -83,14 +82,44 @@ def run_MultiStep():
     MultiStep_DIR = f"{CURRENT_DIR}/../baselines/MultiStep/multistep"
     subprocess.call(f"cd {MultiStep_DIR} && make -B", shell=True)
     scc = f"{MultiStep_DIR}/scc"
+    skip_graphs={"CW", "HL14", "HL12"}
     for key, val in dir_graphs.items():
+        if (key in skip_graphs):
+            continue
         graph=val[0]
         graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_multistep.out"
         cmd= f"numactl -i all {scc} {graph_in} -t {par_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
-# run_parallel()
-# run_serial()
-# run_Tarjan()
-# run_GBBS_serial()
-run_MultiStep()
+def run_iSpan():
+    print("Testing SCC Baselines: Parallel iSpan")
+    iSpan_DIR = f"{CURRENT_DIR}/../baselines/iSpan/src"
+    subprocess.call(f"cd {iSpan_DIR} && make -B", shell=True)
+    scc = f"{iSpan_DIR}/ispan"
+    skip_graphs = {"TW", "CW", "HL14","HL12", "GL2", "GL5", "COS5"}
+    thread_count = (multiprocessing.Pool())._processes
+    alpha=30
+    beta=200
+    gamma=10
+    theta=0.10
+    for key, val in dir_graphs.items():
+        if (key in skip_graphs):
+            continue
+        graph = val[0]
+        graph_in = f"{DIR_GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp1/{key}_ispan.out"
+        cmd = f"numactl -i all {scc} {graph_in} {thread_count} {alpha} {beta} {gamma} {theta} {par_rounds} | tee -a {log_out}"
+        subprocess.call(cmd, shell=True)
+
+
+if __name__ == '__main__':
+    global par_rounds, seq_rounds
+    par_rounds = 1
+    seq_rounds = 1
+    run_parallel()
+    run_GBBS()
+    run_MultiStep()
+    run_iSpan()
+    run_Tarjan()
+    run_serial()
+    run_GBBS_serial()

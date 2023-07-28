@@ -1,5 +1,6 @@
 from graphs import dir_graphs 
 from graphs import sym_graphs
+from graphs import GRAPH_DIR
 import subprocess
 import os
 
@@ -13,7 +14,7 @@ if __name__ == '__main__':
              print(f"{graph} is not uploaded online.")
              continue
         print(f'Downloading {graph} from {url}')
-        graph_file = f'{CURRENT_DIR}/../data/dir/{graph}.bin'
+        graph_file = f'{GRAPH_DIR}/{graph}.bin'
         if not os.path.exists(graph_file):
             if len(url) == 0:
                 print(f'Cannot download {graph}!')
@@ -29,7 +30,7 @@ if __name__ == '__main__':
              print(f"{graph} is not uploaded online.")
              continue
         print(f'Downloading {graph} from {url}')
-        graph_file = f'{CURRENT_DIR}/../data/sym/{graph}.bin'
+        graph_file = f'{GRAPH_DIR}/{graph}.bin'
         if not os.path.exists(graph_file):
             if len(url) == 0:
                 print(f'Cannot download {graph}!')

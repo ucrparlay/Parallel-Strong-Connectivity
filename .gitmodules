@@ -8,3 +8,6 @@
 [submodule "baselines/MultiStep"]
 	path = baselines/MultiStep
 	url = git@github.com:LottieWang/Connectivity.git
+[submodule "baselines/iSpan"]
+	path = baselines/iSpan
+	url = git@github.com:LottieWang/iSpan_baseline.git
