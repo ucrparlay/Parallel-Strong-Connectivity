@@ -25,13 +25,13 @@ dir_graphs = {
     "GL10": ('GeoLifeNoScale_10', 'https://www.dropbox.com/scl/fi/5fw3fhmaqekhihevxvj5e/GeoLifeNoScale_10.bin?rlkey=ed5qn87vdc9m0fjgey7bcopzx&dl=0'),
     "GL15": ('GeoLifeNoScale_15', 'https://www.dropbox.com/scl/fi/roc5tryp828wj3sdlzceu/GeoLifeNoScale_15.bin?rlkey=20tfzbv69xsh841sobh5tny05&dl=0'),
     "GL20": ('GeoLifeNoScale_20', 'https://www.dropbox.com/scl/fi/roc5tryp828wj3sdlzceu/GeoLifeNoScale_15.bin?rlkey=20tfzbv69xsh841sobh5tny05&dl=0'),
-    # "COS5": ('Cosmo50_5', 'https://www.dropbox.com/scl/fi/z6xpgzyb4vhhw42fy2xqt/Cosmo50_5.bin?rlkey=mcmlrx2ga8f6y5tfhu1wyduqi&dl=0'),
+    "COS5": ('Cosmo50_5', 'https://www.dropbox.com/scl/fi/z6xpgzyb4vhhw42fy2xqt/Cosmo50_5.bin?rlkey=mcmlrx2ga8f6y5tfhu1wyduqi&dl=0'),
 
     # # Lattice Graphs
-    # "SQR": ('grid_4000_4000', 'https://www.dropbox.com/scl/fi/7jt1isj9oxejjroeailvk/grid_4000_4000.bin?rlkey=boftsrs25u9gngbmg7mfuaao0&dl=0'),
-    # "REC": ('grid_1000_10000', 'https://www.dropbox.com/scl/fi/wxc3cbdg3i3i6kuqh8ydf/grid_1000_10000.bin?rlkey=ouj3ulurgeomxoruc7g9f6tur&dl=0'),
-    # "SQR'": ('grid_4000_4000_03', 'https://www.dropbox.com/scl/fi/jsyw9lqsfawpk7642sfcg/grid_4000_4000_03.bin?rlkey=rdjgqc8roqfh3spos858h4aon&dl=0'),
-    # "REC'": ('grid_1000_10000_03', 'https://www.dropbox.com/scl/fi/cctseke6v0d5lgugmg89z/grid_1000_10000_03.bin?rlkey=hicjbj4z9y6sj9uogvo9em4s5&dl=0'),
+    "SQR": ('grid_4000_4000', 'https://www.dropbox.com/scl/fi/7jt1isj9oxejjroeailvk/grid_4000_4000.bin?rlkey=boftsrs25u9gngbmg7mfuaao0&dl=0'),
+    "REC": ('grid_1000_10000', 'https://www.dropbox.com/scl/fi/wxc3cbdg3i3i6kuqh8ydf/grid_1000_10000.bin?rlkey=ouj3ulurgeomxoruc7g9f6tur&dl=0'),
+    "SQR_s": ('grid_4000_4000_03', 'https://www.dropbox.com/scl/fi/jsyw9lqsfawpk7642sfcg/grid_4000_4000_03.bin?rlkey=rdjgqc8roqfh3spos858h4aon&dl=0'),
+    "REC_s": ('grid_1000_10000_03', 'https://www.dropbox.com/scl/fi/cctseke6v0d5lgugmg89z/grid_1000_10000_03.bin?rlkey=hicjbj4z9y6sj9uogvo9em4s5&dl=0'),
 }
 
 sym_graphs = {
@@ -63,7 +63,7 @@ sym_graphs = {
 
     # Lattice Graphs
     "SQR": ('grid_4000_4000_sym', 'https://www.dropbox.com/scl/fi/z59lvitzfyvzxlirzul93/grid_4000_4000_sym.bin?rlkey=4uq6oddrfjk22vz97qw0wmpre&dl=0'),
-    "REC": ('grid_1000_10000_sym', 'https://www.dropbox.com/scl/fi/u8jviz95r974vfm5922l4/grid_1000_100000_sym.bin?rlkey=fqea8q8d28ivg40xtw2kd5s5s&dl=0'),
-    "SQR'": ('grid_4000_4000_03_sym', 'https://www.dropbox.com/scl/fi/g3yq60g6782jb16v11u6a/grid_4000_4000_03_sym.bin?rlkey=9twes320fc4l74kkurquzkwim&dl=0'),
-    "REC'": ('grid_1000_10000_03_sym', 'https://www.dropbox.com/scl/fi/o0r8bes6q20s3h7sf2lp1/grid_1000_100000_03_sym.bin?rlkey=zod11puaiis9nt9w3rmq9l1xo&dl=0'),
+    "REC": ('grid_1000_10000_sym', 'https://www.dropbox.com/scl/fi/c3oj4o8gu6xs1i2zke7fb/grid_1000_10000_sym.bin?rlkey=1nyokx9en5hbyjvanhgyfcbjg&dl=0'),
+    "SQR_s": ('grid_4000_4000_03_sym', 'https://www.dropbox.com/scl/fi/g3yq60g6782jb16v11u6a/grid_4000_4000_03_sym.bin?rlkey=9twes320fc4l74kkurquzkwim&dl=0'),
+    "REC_s": ('grid_1000_10000_03_sym', 'https://www.dropbox.com/scl/fi/cf3oxv8cvjermz4lcx6v2/grid_1000_10000_03_sym.bin?rlkey=3u533rr5x1kdrztajebpb6w4a&dl=0'),
 }

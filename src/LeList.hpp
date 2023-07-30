@@ -227,7 +227,7 @@ void LE_LIST::le_list(double beta) {
   list_offset = 0;
   // ------------ begin first round --------------
   // #if defined(DEBUG)
-  cout << "round 1 n_front 1" << endl;
+  // cout << "round 1 n_front 1" << endl;
   // #endif
   sequence<NodeId> first_map(G.n);
   BFS BFS_P(G);
@@ -266,7 +266,7 @@ void LE_LIST::le_list(double beta) {
     start_idx = finished;
     n_front = end - start_idx;
     // #if defined(DEBUG)
-    cout << "round " << current_round << " n_front " << n_front << endl;
+    // cout << "round " << current_round << " n_front " << n_front << endl;
     // #endif
     multi_timer.start();
     multi_search();
@@ -314,13 +314,13 @@ void LE_LIST::le_list(double beta) {
   filt_timer.stop();
   // -------end of filter-------------
 
-  cout << "----------------" << endl;
-  cout << "pred_time " << filt_timer.get_total() << endl;
-  cout << "pack bag time " << pack_timer.get_total() << endl;
-  cout << "compute table size time " << table_timer.get_total() << endl;
-  cout << "resize table size time " << resize_timer.get_total() << endl;
-  cout << "init table size time " << table_init_timer.get_total() << endl;
-  cout << "multi_search time " << multi_timer.get_total() << endl;
+  // cout << "----------------" << endl;
+  // cout << "pred_time " << filt_timer.get_total() << endl;
+  // cout << "pack bag time " << pack_timer.get_total() << endl;
+  // cout << "compute table size time " << table_timer.get_total() << endl;
+  // cout << "resize table size time " << resize_timer.get_total() << endl;
+  // cout << "init table size time " << table_init_timer.get_total() << endl;
+  // cout << "multi_search time " << multi_timer.get_total() << endl;
   parallel_for(0, list_offset, [&](NodeId i) {
     list[i] = make_tuple(get<0>(unique[i]), centers[get<1>(unique[i])],
                          get<2>(unique[i]));

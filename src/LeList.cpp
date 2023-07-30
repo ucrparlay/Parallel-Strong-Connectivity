@@ -16,12 +16,12 @@ int main(int argc, char** argv) {
   t1.start();
   Graph G = read_graph(filename, !P.getOption("-nmmap"), P.getOption("-s"));
   t1.stop();
-
+  cout << "Graph: " << filename << endl;
   cout << "#vertices: " << G.n << " #edges: " << G.m << '\n';
   double beta = P.getOptionDouble("-beta", 1.5);
 
   LE_LIST LE_LIST_P(G);
-  cout << "initialize LE_LIST finish " << endl;
+  // cout << "initialize LE_LIST finish " << endl;
   int repeat = P.getOptionInt("-t", (int)3);
 
   if (P.getOption("-seq")) {
@@ -48,9 +48,9 @@ int main(int argc, char** argv) {
       LE_LIST_P.le_list(beta);
       double cost = t.stop();
       cout << "LE-List cost: " << cost << endl;
-      cout << "LE-List size: " << LE_LIST_P.list_offset << endl;
     }
-    cout << "average LE-List cost: " << t.get_total() / repeat << endl;
+    cout << "# LE-List size: " << LE_LIST_P.list_offset << endl;
+    cout << "average cost: " << t.get_total() / repeat << endl;
     // for (size_t i = 0; i<LE_LIST_P.list_offset; i++){
     //   cout << get<0>(LE_LIST_P.list[i]) << " " << get<1>(LE_LIST_P.list[i])
     //   << " " << get<2>(LE_LIST_P.list[i]) << endl;
