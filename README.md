@@ -16,17 +16,17 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 > **_NOTE:_**  It does not compile with g++-8, which is a known bug that we are working on. It works with g++-7, g++-9, g++-11, and g++-12.  
 
 - python3 (used to run scripts)
-  - pandas (used to run scripts)
+  - pandas (used to collect experiment data)
 - We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
 - numactl (used for arrange memory on different sockets)
 - We include the baselines in the folder `baselines`
-
+- bazel (used to compile the baseline 'gbbs')
 ### Get Started
 
-Code download:
+Code download: git clone with submodules
 
 ```
-git clone git@github.com:ucrparlay/Parallel-Strong-Connectivity.git
+git clone --recurse-submodules git@github.com:ucrparlay/Parallel-Strong-Connectivity.git
 ```
 <!-- 
 We provide 3 small directed graphs as examples. They are located in `./data/directed`. Run the following commands to check if the deployment was successful:

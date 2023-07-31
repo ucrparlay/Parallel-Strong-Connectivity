@@ -43,11 +43,23 @@ def run_LeList():
         cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
 
-# def run_ConnectIt():
+def run_ConnectIt():
+    print("Testing the LDD-UF-JTB connectivity implementation in ConnectIt")
+    cmd = f"cd {CURRENT_DIR}/../baselines/gbbs/ && bazel build //benchmarks/Connectivity/..."
+    subprocess.call(cmd, shell=True)
+    cc = f"{CURRENT_DIR}/../baselines/gbbs/bazel-bin/benchmarks/Connectivity/ConnectIt/mains/unite_rem_cas_ldd"
+    for key, val in sym_graphs.items():
+        graph = val[0]
+        graph_in = f"{GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp5/{key}_connectit.out"
+        print(f"Running {key}")
+        cmd =f"numactl -i all {cc} -s -b -r {par_rounds+1} {graph_in} | tee -a {log_out}"
+        subprocess.call(cmd, shell=True)
 # def run_LeList_parlay():
 if __name__ == '__main__':
     global par_rounds, seq_rounds
     par_rounds = 1
     seq_rounds = 1
     # run_Connectivity()
-    run_LeList()
+    # run_LeList()
+    run_ConnectIt()
