@@ -57,9 +57,9 @@ def run_Tarjan():
 
 def run_GBBS():
     print("Testing SCC Baselines: Parallel GBBS")
-    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16"
-    subprocess.call(f"cd {GBBS_DIR} && make -B", shell=True)
-    scc = f"{GBBS_DIR}/StronglyConnectedComponents"
+    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs"
+    subprocess.call(f"cd {GBBS_DIR} && bazel build //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)
+    scc = f"{GBBS_DIR}/bazel-bin/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/StronglyConnectedComponents_main"
     for key, val in dir_graphs.items():
         graph=val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
@@ -68,9 +68,9 @@ def run_GBBS():
         subprocess.call(cmd, shell=True)
 def run_GBBS_serial():
     print("Testing SCC Baselines: Parallel GBBS")
-    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16"
-    subprocess.call(f"cd {GBBS_DIR} && make SERIAL=1 -B", shell=True)
-    scc = f"{GBBS_DIR}/StronglyConnectedComponents"
+    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs"
+    subprocess.call(f"cd {GBBS_DIR} && bazel build --config=serial //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)
+    scc = f"{GBBS_DIR}/bazel-bin/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/StronglyConnectedComponents_main"
     for key, val in dir_graphs.items():
         graph=val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"

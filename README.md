@@ -20,7 +20,7 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 - We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
 - numactl (used for arrange memory on different sockets)
 - We include the baselines in the folder `baselines`
-- bazel (used to compile the baseline 'gbbs')
+- [Bazel](https://bazel.build/install) 2.1.0 (used to compile the baseline 'gbbs')
 ### Get Started
 
 Code download: git clone with submodules
