@@ -55,11 +55,24 @@ def run_ConnectIt():
         print(f"Running {key}")
         cmd =f"numactl -i all {cc} -s -b -r {par_rounds+1} {graph_in} | tee -a {log_out}"
         subprocess.call(cmd, shell=True)
-# def run_LeList_parlay():
+def run_LeList_parlay():
+    print("Testing parlaylib LE-List Running Time")
+    os.makedirs(f"{CURRENT_DIR}/../parlaylib/build", exist_ok=True)
+    cmd = f"cd {CURRENT_DIR}/../parlaylib/build && cmake .. -DPARLAY_EXAMPLES=On && cmake --build ."
+    subprocess.call(cmd, shell = True)
+    LeList = f"{CURRENT_DIR}/../parlaylib/build/examples/le_list"
+    for key, val in sym_graphs.items():
+        graph = val[0]
+        graph_in = f"{GRAPH_DIR}/{graph}.bin"
+        log_out = f"{CURRENT_DIR}/../log/exp5/{key}_lelist_parlay.out"
+        print(f"Running {key}")
+        cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds +1} | tee -a {log_out}"
+        subprocess.call(cmd, shell=True)
 if __name__ == '__main__':
     global par_rounds, seq_rounds
     par_rounds = 1
     seq_rounds = 1
-    # run_Connectivity()
-    # run_LeList()
+    run_Connectivity()
+    run_LeList()
     run_ConnectIt()
+    run_LeList_parlay()
