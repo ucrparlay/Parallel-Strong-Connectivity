@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
     t.start();
     Connectivity(G, beta);
     double time = t.stop();
-    cout << "Connectivity time: " << time << " " << endl;
+    cout << "Connectivity time: " << time << endl;
   }
-  cout << "average_time: " << t.get_total() / repeat << " " << endl;
+  cout << "average_time: " << t.get_total() / repeat << endl;
   return 0;
 }

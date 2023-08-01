@@ -62,7 +62,34 @@ def collect_exp1(RESULT_DIR):
     print(f"Figure1 Heatmap tabel is stored to {fig1_file}")
     heatdf.to_csv(fig1_file)
     
-
-    
+def collect_exp5(RESULT_DIR):
+    data = dict()
+    algs = {"Our Connectivity": ("_cc", "average_time:"),"DHS21": ("_connectit", "### t ="), "CC:Spd.": (None,None), "Our LE-List": ("_lelist", "average cost:"),"parlaylib": ("_lelist_parlay", "Time: le_list:"), "LE-List:Spd.":(None,None)}
+    for a, val in algs.items():
+        data[a]=[]
+        (surfix, key_words)=val
+        if (surfix==None):
+            continue
+        for graph in dir_graphs.keys():
+            try: 
+                data_g = collect_data(f"{LOG_DIR}/exp5/{graph}{surfix}.out", key_words)
+                if (len(data_g)==1):
+                    data[a].append(data_g[0])
+                elif (len(data_g) >1):
+                    data[a].append(np.mean(data_g[1:]))
+                else:
+                    data[a].append(np.nan)
+            except:
+                data[a].append(np.nan)
+        data[a]=np.array(data[a])
+    data["CC:Spd."] = data["DHS21"]/data['Our Connectivity']
+    data["LE-List:Spd."] = data["parlaylib"]/data['Our LE-List']
+    df = pd.DataFrame.from_dict(data)
+    df = df.set_axis(dir_graphs.keys())
+    pd.set_option('max_columns', None)
+    table4_file = f"{RESULT_DIR}/Table4.csv"
+    print(f"Table 4 is stored to {table4_file}")
+    df.to_csv(table4_file)
 
 collect_exp1(f"{CURRENT_DIR}/../result")
+collect_exp5(f"{CURRENT_DIR}/../result")

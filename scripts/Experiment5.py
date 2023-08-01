@@ -19,8 +19,7 @@ global par_rounds
 global seq_rounds
 def run_Connectivity():
     print("Testing Our Parallel Connectivity Running Time")
-    if not os.path.exists(f"{CURRENT_DIR}/../src/Connectivity"):
-        subprocess.call(f'cd {CURRENT_DIR}/../src && make Connectivity', shell=True)
+    subprocess.call(f'cd {CURRENT_DIR}/../src && make Connectivity', shell=True)
     # For each experiment, run 11 times and take the average of the last 10 time
     cc = f'{CURRENT_DIR}/../src/Connectivity'
     for key, val in sym_graphs.items():
@@ -32,8 +31,7 @@ def run_Connectivity():
         subprocess.call(cmd, shell=True)
 def run_LeList():
     print("Testing Our Parallel LE-List Running Time")
-    if not os.path.exists(f"{CURRENT_DIR}/../src/LeList"):
-        subprocess.call(f"cd {CURRENT_DIR}/../src && make LeList", shell=True)
+    subprocess.call(f"cd {CURRENT_DIR}/../src && make LeList", shell=True)
     LeList = f"{CURRENT_DIR}/../src/LeList"
     for key, val in sym_graphs.items():
         graph = val[0]
@@ -73,6 +71,6 @@ if __name__ == '__main__':
     par_rounds = 1
     seq_rounds = 1
     run_Connectivity()
-    run_LeList()
-    run_ConnectIt()
-    run_LeList_parlay()
+    # run_LeList()
+    # run_ConnectIt()
+    # run_LeList_parlay()
