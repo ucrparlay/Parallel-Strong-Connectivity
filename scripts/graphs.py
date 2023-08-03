@@ -21,10 +21,10 @@ dir_graphs = {
     "HH5": ('Household.lines_5', 'https://www.dropbox.com/scl/fi/ndpp5pq2jjlhuqhpx91r7/Household.lines_5.bin?rlkey=n8s0s9wqyzqfxdl82mmqui1z7&dl=0'),
     "CH5": ('CHEM_5', 'https://www.dropbox.com/scl/fi/f0n4o9mrbcfqhw54oa95i/CHEM_5.bin?rlkey=cji03kmi4e5tzmrdj36jsk062&dl=0'),
     "GL2": ('GeoLifeNoScale_2', 'https://www.dropbox.com/scl/fi/kckxpp3wcmpbkphikqer4/GeoLifeNoScale_2.bin?rlkey=ybmgdkymbq4i06fvsumk7w9ak&dl=0'),
-    "GL5": ('GeoLifeNoScale_5', 'https://www.dropbox.com/scl/fi/kckxpp3wcmpbkphikqer4/GeoLifeNoScale_2.bin?rlkey=ybmgdkymbq4i06fvsumk7w9ak&dl=0'),
+    "GL5": ('GeoLifeNoScale_5', 'https://www.dropbox.com/scl/fi/x3rrl7imfok5742c8g22v/GeoLifeNoScale_5.bin?rlkey=pltytc4h08oyb93hgf3aho0lo&dl=0'),
     "GL10": ('GeoLifeNoScale_10', 'https://www.dropbox.com/scl/fi/5fw3fhmaqekhihevxvj5e/GeoLifeNoScale_10.bin?rlkey=ed5qn87vdc9m0fjgey7bcopzx&dl=0'),
     "GL15": ('GeoLifeNoScale_15', 'https://www.dropbox.com/scl/fi/roc5tryp828wj3sdlzceu/GeoLifeNoScale_15.bin?rlkey=20tfzbv69xsh841sobh5tny05&dl=0'),
-    "GL20": ('GeoLifeNoScale_20', 'https://www.dropbox.com/scl/fi/roc5tryp828wj3sdlzceu/GeoLifeNoScale_15.bin?rlkey=20tfzbv69xsh841sobh5tny05&dl=0'),
+    "GL20": ('GeoLifeNoScale_20', 'https://www.dropbox.com/scl/fi/2ufpj603of52ygv8ppqg3/GeoLifeNoScale_20.bin?rlkey=qo9csmyg9bryl3kxejwfhiiwr&dl=0'),
     "COS5": ('Cosmo50_5', 'https://www.dropbox.com/scl/fi/z6xpgzyb4vhhw42fy2xqt/Cosmo50_5.bin?rlkey=mcmlrx2ga8f6y5tfhu1wyduqi&dl=0'),
 
     # # Lattice Graphs
