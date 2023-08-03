@@ -71,6 +71,6 @@ if __name__ == '__main__':
     par_rounds = 1
     seq_rounds = 1
     run_Connectivity()
-    # run_LeList()
-    # run_ConnectIt()
-    # run_LeList_parlay()
+    run_LeList()
+    run_ConnectIt()
+    run_LeList_parlay()
