@@ -92,71 +92,50 @@ class SCC {
   }
 
 #if defined(BREAKDOWN)
-  timer multi_search_timer;
-  timer pack_bag_timer;
   timer init_timer;
   timer first_round_timer;
-  timer set_interset_timer;
-  timer edge_map_timer;
+  timer multi_search_timer;
+  timer multi_search_safe_timer;
 #endif
   timer scc_timer;
   void timer_reset() {
 #if defined(BREAKDOWN)
-    multi_search_timer.reset();
-    pack_bag_timer.reset();
     init_timer.reset();
     first_round_timer.reset();
-    set_interset_timer.reset();
-    edge_map_timer.reset();
+    multi_search_timer.reset();
+    multi_search_safe_timer.reset();
 #endif
     scc_timer.reset();
   }
 #if defined(BREAKDOWN)
   void breakdown_report(int repeat) {
-    cout << "average multi_search time "
-         << multi_search_timer.get_total() / repeat << endl;
-    cout << "average edge_map time " << edge_map_timer.get_total() / repeat
-         << endl;
-    cout << "average pack_bag_time " << pack_bag_timer.get_total() / repeat
-         << endl;
     cout << "average init_time " << init_timer.get_total() / repeat << endl;
     cout << "average first_round_time "
          << first_round_timer.get_total() / repeat << endl;
-    cout << "average set_interset_time "
-         << set_interset_timer.get_total() / repeat << endl;
-    cout << "number of threads " << num_workers() << endl;
+    cout << "average multi_search time "
+         << multi_search_timer.get_total() / repeat << endl;
+    cout << "average hash table resize time "
+        << (multi_search_safe_timer.get_total()-multi_search_timer.get_total())/repeat << endl;
   }
 #endif
 };
 
-// size_t table_operate;
 bool SCC::edge_map(NodeId cur_node, NodeId ngb_node,
                    gbbs::resizable_table<K, V, hash_kv>& table) {
   bool labels_changed = false;
   auto s_iter = table.get_iter(cur_node);
-  // size_t num_probes = 0;
-  // int local_table_operate = 0;
   if (s_iter.init()) {
     auto table_entry = s_iter.next();
     NodeId s_label = std::get<1>(table_entry);
-    // auto results = table.insert(std::make_tuple(ngb_node, s_label));
     labels_changed |= table.insert(std::make_tuple(ngb_node, s_label));
-    // labels_changed |= results.first;
-    // num_probes+= results.second;
     if (table.is_full()) return false;
-    // local_table_operate ++;
 
     while (s_iter.has_next()) {
       auto table_entry = s_iter.next();
       s_label = std::get<1>(table_entry);
-      // auto results = table.insert(std::make_tuple(ngb_node, s_label));
       labels_changed |= table.insert(std::make_tuple(ngb_node, s_label));
-      // labels_changed |= results.first;
-      // num_probes += results.second;
       if (table.is_full()) return false;
-      // local_table_operate ++;
     }
-    // num_probes += s_iter.num_probes;
   }
 
   return labels_changed;
@@ -167,8 +146,7 @@ bool SCC::edge_map_first(NodeId s_label, NodeId ngb_node,
   return table.insert(std::make_tuple(ngb_node, s_label));
 }
 
-// template <class SI>
-// inline ?
+
 int SCC::multi_search(sequence<size_t>& labels,
                       gbbs::resizable_table<K, V, hash_kv>& table, bool forward,
                       bool local) {
@@ -183,38 +161,24 @@ int SCC::multi_search(sequence<size_t>& labels,
   sequence<NodeId>& E = forward ? graph.E : graph.in_E;
 
   size_t round = 0;
-  // size_t queue_front = ceil(per_core * num_workers() / n_front);
-  // size_t queue_size = min(queue_front, tau);
   size_t queue_size = tau;
-  // cout << "QUEUE_SIZE " << queue_size << endl;
   int sub_round = 0;
-  // sequence<size_t> probes;
   while (sub_n_front > 0) {
     sub_round++;
     time_stamp_update();
     round++;
-#if defined(DEBUG)
+    #if defined(DEBUG)
     cout << "multi-search round " << round << " frontier " << sub_n_front
          << endl;
     cout << "resizable table m " << table.m << endl;
-#endif
-    // timer sub_search_timer;
+    #endif  
     parallel_for(
         0, sub_n_front, [&](size_t i) { bits[substep_front[i]] = 0; }, 2048);
-    // sub_search_timer.start();
-
-#if defined(BREAKDOWN)
-    edge_map_timer.start();
-#endif
-    // if (sub_round == 1){
-    //   probes = sequence<size_t>(n_front);
-    // }
     parallel_for(
         0, sub_n_front,
         [&](size_t i) {
           NodeId node = substep_front[i];
           EdgeId degree = offset[node + 1] - offset[node];
-          // size_t num_probes = 0;
           EdgeId edge_map_cnt = 0;
           if (local && (degree < queue_size) && (edge_map_cnt < queue_size)) {
             NodeId Q[queue_size];
@@ -232,18 +196,11 @@ int SCC::multi_search(sequence<size_t>& labels,
                 NodeId v = E[j];
                 if (!(labels[v] & TOP_BIT) && (labels[v] == labels[u])) {
                   edge_map_cnt++;
-                  // auto results = edge_map(node, v, table);
-                  // num_probes += results.second;
                   bool edge_map_success =
                       (sub_round == 1 && local)
                           ? edge_map_first(label_offset + i, v, table)
                           : edge_map(node, v, table);
-                  // if (sub_round == 1){
-                  //   edge_map_first(label_offset+i, v, table);
-                  // }
-                  // if (edge_map(node,v,table)) {
                   if (edge_map_success) {
-                    // if (tail < (int)queue_size  && edge_map_cnt < 300) {
                     if (edge_map_cnt < queue_size) {
                       Q[tail] = v;
                       tail++;
@@ -277,7 +234,6 @@ int SCC::multi_search(sequence<size_t>& labels,
                         (sub_round == 1 && local)
                             ? edge_map_first(label_offset + i, ngb_node, table)
                             : edge_map(node, ngb_node, table);
-                    // if (edge_map(node, ngb_node, table)) {
                     if (edge_map_success) {
                       if (compare_and_swap(&bits[ngb_node], false, true)) {
                         bag.insert(ngb_node, make_slice(bag_stamp),
@@ -293,18 +249,8 @@ int SCC::multi_search(sequence<size_t>& labels,
     if (table.is_full()) {
       return -1;
     }
-
-#if defined(BREAKDOWN)
-    pack_bag_timer.start();
-#endif
     sub_n_front = bag.pack(make_slice(substep_front), make_slice(bag_stamp),
                            current_stamp);
-#if defined(BREAKDOWN)
-    pack_bag_timer.stop();
-    edge_map_timer.stop();
-    // cout << "multi_round time " << sub_search_timer.stop() << endl;
-#endif
-
     table.update_nelms();
 #if defined(DEBUG)
     cout << "table.ne = " << table.ne << endl;
@@ -317,11 +263,30 @@ int SCC::multi_search_safe(sequence<size_t>& labels,
                            gbbs::resizable_table<K, V, hash_kv>& table,
                            bool forward, bool local) {
   int round;
-  while ((round = multi_search(labels, table, forward, local)) == -1) {
+  #if defined(BREAKDOWN)
+  multi_search_safe_timer.start();
+  double multi_search_time=0;
+  #endif
+  
+  while (true){
+    #if defined(BREAKDOWN)
+    multi_search_timer.start();
+    #endif
+    round = multi_search(labels, table, forward, local);
+    #if defined(BREAKDOWN)
+    multi_search_time=multi_search_timer.stop();
+    #endif
+    if (round != -1){break;}
     cout << "trigger table resize" << endl;
+    #if defined(BREAKDOWN)
+    multi_search_timer.total_time -= multi_search_time;
+    #endif
     parallel_for(0, graph.n, [&](size_t i) { bits[i] = 0; });
     table.double_size();
   }
+  #if defined(BREAKDOWN)
+  multi_search_safe_timer.stop();
+  #endif
   return round;
 }
 
@@ -344,7 +309,6 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     vertices[i] = i;
   });
   parallel_for(0, bag.get_bag_capacity(), [&](size_t i) { bag_stamp[i] = 0; });
-  // parallel_for(0, n, [&](size_t i){vertices[i]=i;});
 
   auto NON_ZEROS = parlay::filter(vertices, [&](NodeId v) {
     return ((graph.offset[v + 1] - graph.offset[v]) != 0) &&
@@ -376,17 +340,12 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   first_round_timer.start();
 #endif
   REACH REACH_P(graph);
-  // bool no_dense = false;
+  // forward search
   REACH_P.reach(source, dist_1, local_reach);
-
+  // backward search
   REACH_P.swap_graph();
   REACH_P.reach(source, dist_2, local_reach);
 
-  // bfs_backward_time = first_round_timer.stop();
-  // first_round_timer.start();
-  // cout << "first round, "
-  //      << "source " << source << " bfs_forward_depth " << bfs_forward_depth
-  //      << " bfs_backward_depth " << bfs_backward_depth << endl;
   REACH_P.swap_graph();
   NodeId label = label_offset;
   parallel_for(0, P.size(), [&](size_t i) {
@@ -398,13 +357,13 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   });
 
   centers = parlay::filter(P, [&](NodeId v) { return !(labels[v] & TOP_BIT); });
-#if defined(BREAKDOWN)
+  #if defined(BREAKDOWN)
   first_round_timer.stop();
-#endif
-#if defined(DEBUG)
+  #endif
+  #if defined(DEBUG)
   // cout << "First Round Time " << scc_timer.stop() << endl;
   // scc_timer.start();
-#endif
+  #endif
   label_offset++;
   // cout << "After first round, |FRONT| = " << centers.size()
   //      << " vertices remain. Total done = " << P.size() - centers.size()
@@ -445,9 +404,6 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     if (n_front == 0) continue;
     // cout << "QUEUE_SIZE " << tau << endl;
     t_search.start();
-#if defined(BREAKDOWN)
-    multi_search_timer.start();
-#endif
     T empty = std::make_tuple(UINT_N_MAX, UINT_N_MAX);
     // size_t out_table_m = max((size_t)min((NodeId)ceil(0.35*n_remaining) ,
     // (NodeId)6000000), (size_t)(beta)*out_table_ne);
@@ -475,9 +431,6 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
         gbbs::resizable_table<K, V, hash_kv>(in_table_m, empty, hash_kv());
     multi_search_safe(labels, table_back, false, local_scc);
     t_search.stop();
-#if defined(BREAKDOWN)
-    multi_search_timer.stop();
-#endif
 
     label_offset += n_front;
     // std::cout << "in_table, m = " << table_back.m << " ne = " << table_back.ne
@@ -492,9 +445,6 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     auto& smaller_t = (table_forw.m <= table_back.m) ? table_forw : table_back;
     auto& larger_t = (table_forw.m > table_back.m) ? table_forw : table_back;
 
-#if defined(BREAKDOWN)
-    set_interset_timer.start();
-#endif
     // intersect the tables
     auto map_f = [&](const std::tuple<K, V>& kev) {
       NodeId v = std::get<0>(kev);
@@ -520,10 +470,6 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
       write_max(&labels[v], label, [&](size_t a, size_t b) { return a < b; });
     };
     larger_t.map(sp_map);
-
-#if defined(BREAKDOWN)
-    set_interset_timer.stop();
-#endif
 
     out_table_ne = table_forw.ne;
     in_table_ne = table_back.ne;

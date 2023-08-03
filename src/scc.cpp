@@ -53,39 +53,13 @@ int main(int argc, char** argv) {
   t1.stop();
   cout << "input graph: " << fileName << endl;
   cout << "number of vertices: " << graph.n << ", number of edges: " << graph.m << endl;
-  // cout << "enable VGC1: " << local_reach << ", enable VGC_multi: " << local_scc << endl;
+  cout << "enable VGC1: " << local_reach << ", enable VGC_multi: " << local_scc << endl;
 
   // size_t* label = new size_t[graph.n];
   sequence<size_t> label = sequence<size_t>(graph.n);
   int repeat = P.getOptionInt("-t", (int)10);
   timer t;
   SCC SCC_P(graph);
-  // tau = 1024;
-  // per_core = 100000000;
-  // tau = 1024;
-  // per_core = 100000000;
-  // size_t per_cores[6] = {10000, 100000, 200000, 1000000, 10000000,
-  // 100000000}; for (auto it : per_cores){ pair<bool,bool> local_cases[3] =
-  // {make_pair(false,false), make_pair(true,false),make_pair(true,true)}; for
-  // (auto local_:local_cases){
-  //   local_reach = local_.first;
-  //   local_scc = local_.second;
-  //   SCC_P.scc(label, beta, local_reach, local_scc);
-
-  //   SCC_P.timer_reset();
-  //   t.reset();
-  //   double scc_cost;
-  //   for (int i = 0; i < repeat; i++) {
-  //     t.start();
-  //     SCC_P.scc(label, beta, local_reach, local_scc);
-  //     scc_cost = t.stop();
-  //     cout << "scc cost: " << scc_cost << endl;
-  //   }
-  //   cout << "average cost " << t.get_total() / repeat << endl;
-  // #if defined(BREAKDOWN)
-  //   SCC_P.breakdown_report(repeat);
-  // #endif
-  // }
   SCC_P.scc(label, beta, local_reach, local_scc);
 
   SCC_P.timer_reset();
@@ -101,14 +75,6 @@ int main(int argc, char** argv) {
   SCC_P.breakdown_report(repeat);
 #endif
   if (P.getOption("-status")) SCC_status(label, graph.n);
-  // cout << "-----without local search-------" << endl;
-  // local_reach = false;
-  // local_scc = false;
-  // SCC_P.scc(label, beta, local_reach, local_scc);
-  // cout << "-----with local search----------" << endl;
-  // local_reach = true;
-  // local_scc = true;
-  // SCC_P.scc(label, beta, local_reach, local_scc);
 
   return 0;
 }

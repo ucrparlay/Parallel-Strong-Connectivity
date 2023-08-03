@@ -18,7 +18,7 @@ endif
 
 INCLUDE_PATH = -I../parlaylib/include/
 
-CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE)
+CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE) $(BREAK)
 
 ifdef CILKPLUS
 CPPFLAGS += -DPARLAY_CILKPLUS -DCILK -fcilkplus
