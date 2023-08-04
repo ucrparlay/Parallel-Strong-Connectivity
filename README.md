@@ -15,9 +15,10 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 
 > **_NOTE:_**  It does not compile with g++-8, which is a known bug that we are working on. It works with g++-7, g++-9, g++-11, and g++-12.  
 
-- python3 (used to run scripts)
+- python3 (used to run scripts, version >= 3.7)
   - pandas (used to collect experiment data)
   - numpy (used to collect experiment data)
+  - matplotlib (used to draw figures)
   - seaborn (used to draw figures) 
 - We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
 - numactl (used for arrange memory on different sockets)

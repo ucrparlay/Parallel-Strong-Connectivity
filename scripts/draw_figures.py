@@ -137,7 +137,7 @@ def Figure10(data):
     i = 0
     for g in graphs:
         ax[i].tick_params(axis = 'y', pad = 0.1)
-        ax[i].yaxis.set_major_locator(MaxNLocator(5, integer=True))
+        # ax[i].yaxis.set_major_locator(MaxNLocator(5, integer=True))
         colors_map = list(sns.color_palette('tab10'))
         ax[i].scatter(data[g]["VGC"], data[g]["Plain"], alpha=0.2, color = colors_map[0])
         factor = sum(data[g]["Plain"])/sum(data[g]["VGC"])
