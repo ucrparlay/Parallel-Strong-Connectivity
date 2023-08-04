@@ -172,8 +172,30 @@ def collect_exp4():
             df=df.set_axis(tau)
             df.to_csv(f)
             f.write("\n")
+def collect_exp6():
+    graphs = ["LJ", "TW", "SD", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
+    data=dict()
+    file_out = f"{RESULT_DIR}/Figure10.csv"
+    for g in graphs:
+        data[g]=dict()
+        try:
+            data_ = collect_data(f"{LOG_DIR}/exp6/{g}_round.out", "depth")
+            mid = int(len(data_)/2)
+            data[g]["Plain"] = data_[:mid]
+            data[g]["VGC"]=data_[mid:]
+        except:
+            data[g]["Plain"]=[float('nan')]
+            data[g]["VGC"]=[float('nan')]
+    print(f"Write number of rounds with/without VGC to {file_out}")
+    with open(file_out, 'a') as f:
+        for g in graphs:
+            f.write(f"graph {g}\n")
+            df = pd.DataFrame.from_dict(data[g])
+            df.to_csv(f)
+            f.write("\n")
 # collect_exp1()
 # collect_exp5()
 # collect_exp2()
 # collect_exp3()
-collect_exp4()
+# collect_exp4()
+collect_exp6()

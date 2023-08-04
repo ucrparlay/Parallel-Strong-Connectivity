@@ -20,9 +20,9 @@ def run_SCC_ROUND():
     subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B ROUND=1 -j 8', shell=True)
     graphs = ["LJ", "TW", "SD", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
     for g in graphs:
-        # try:
-        SCC_ROUND(g, f"{CURRENT_DIR}/../log/exp6/{g}_round.out")
-        # except:
-        #     continue
+        try:
+            SCC_ROUND(g, f"{CURRENT_DIR}/../log/exp6/{g}_round.out")
+        except:
+            continue
 if __name__ == "__main__":
     run_SCC_ROUND()

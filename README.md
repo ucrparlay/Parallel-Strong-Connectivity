@@ -17,6 +17,8 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 
 - python3 (used to run scripts)
   - pandas (used to collect experiment data)
+  - numpy (used to collect experiment data)
+  - seaborn (used to draw figures) 
 - We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
 - numactl (used for arrange memory on different sockets)
 - We include the baselines in the folder `baselines`
