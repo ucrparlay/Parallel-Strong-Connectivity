@@ -26,11 +26,11 @@ def GBBS_breakdown(graph, file_out):
     subprocess.call(cmd_gbbs, shell=True)
 
 def run_breakdown():
+    graphs = ["LJ", "TW", "SD", "CW", "CH5", "GL2", "GL20", "COS5", "SQR", "SQR_s"]
     print("compile with BREAKDOWN flag")
     subprocess.call(f'cd {CURRENT_DIR}/../src && make scc BREAKDOWN=1 -B', shell=True)
     GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs"
     subprocess.call(f"cd {GBBS_DIR} && bazel build --define breakdown=1 //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)
-    graphs = ["LJ", "TW", "SD", "CW", "CH5", "GL2", "GL20", "COS5", "SQR", "SQR’"]
     for g in graphs:
         scc_out = f"{CURRENT_DIR}/../log/exp3/{g}_break.out"
         gbbs_out = f"{CURRENT_DIR}/../log/exp3/{g}_break_gbbs.out"

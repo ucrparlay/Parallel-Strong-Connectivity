@@ -112,6 +112,45 @@ def collect_exp2():
             df = df.set_axis(threads)
             df.to_csv(f)
             f.write("\n")
+def collect_exp3():
+    graphs = ["LJ", "TW", "SD", "CW", "CH5", "GL2", "GL20", "COS5", "SQR", "SQR_s"]
+    file_out = f"{RESULT_DIR}/Figure9.csv"
+    data=dict()
+    key_words = ["init_time", "first_round_time", "multi_search time", "hash table resize time"]
+    for g in graphs:
+        data[g]=dict()
+        data[g]["GBBS"] =[]
+        data[g]["Plain"]=[]
+        data[g]["VGC1"]=[]
+        data[g]["Final"]=[]
+        GBBS_file = f"{LOG_DIR}/exp3/{g}_break_gbbs.out"
+        our_file = f"{LOG_DIR}/exp3/{g}_break.out"
+        try:
+            gbbs_total = collect_data(GBBS_file, "# time per iter")
+            our_totals = collect_data(our_file, "average cost")
+            for key in key_words:
+                gbbs_data = collect_data(GBBS_file, key)
+                data[g]["GBBS"].append(np.mean(gbbs_data[1:]))
+                our_data = collect_data(our_file, key)
+                data[g]["Plain"].append(our_data[0])
+                data[g]["VGC1"].append(our_data[1])
+                data[g]["Final"].append(our_data[2])
+            data[g]["GBBS"].append(gbbs_total[0]-np.sum(data[g]["GBBS"]))
+            data[g]["Plain"].append(our_totals[0]-np.sum(data[g]["Plain"]))
+            data[g]["VGC1"].append(our_totals[1]-np.sum(data[g]["VGC1"]))
+            data[g]["Final"].append(our_totals[2]-np.sum(data[g]["Final"]))
+        except:
+            for key in data[g].keys():
+                data[g][key]=[float('nan')]*(len(key_words)+1)
+    print(f"Breakdown information is writen to {file_out}")
+    with open(file_out, 'a') as f:
+        for g in graphs:
+            f.write(f"graph {g}\n")
+            df = pd.DataFrame.from_dict(data[g])
+            df = df.set_axis(["Trimming", "First SCC", "Multi-search","Hash Table Resizing", "Others"])
+            df.to_csv(f)
+            f.write("\n")
 # collect_exp1()
 # collect_exp5()
 # collect_exp2()
+collect_exp3()
