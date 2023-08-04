@@ -39,7 +39,7 @@ class REACH {
  public:
   size_t num_round;
   void reach_seq(NodeId source, sequence<bool>& dst);
-  void reach(NodeId source, sequence<bool>& dst, bool local);
+  int reach(NodeId source, sequence<bool>& dst, bool local);
   REACH() = delete;
   REACH(Graph& G) : graph(G), bag(G.n) {
     n = graph.n;
@@ -205,7 +205,7 @@ EdgeId REACH::dense_sample(NodeId rand_seed) {
   return n_front * (out_edges / count);
 }
 
-void REACH::reach(NodeId source, sequence<bool>& dst, bool local) {
+int REACH::reach(NodeId source, sequence<bool>& dst, bool local) {
   parallel_for(0, graph.n, [&](NodeId i) { dst[i] = false; });
   front[0] = source;
   dst[source] = true;
@@ -239,6 +239,7 @@ void REACH::reach(NodeId source, sequence<bool>& dst, bool local) {
     cout << "cost " << t.get_total() << endl;
 #endif
   }
+  return num_round;
 }
 
 #endif

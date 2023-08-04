@@ -2,6 +2,10 @@ ifdef BREAKDOWN
 BREAK = -DBREAKDOWN
 endif
 
+ifdef ROUND
+RD = -DROUND
+endif
+
 ifdef NLONG
 INTN = -DNLONG
 endif
@@ -18,7 +22,7 @@ endif
 
 INCLUDE_PATH = -I../parlaylib/include/
 
-CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE) $(BREAK)
+CPPFLAGS = -std=c++17 -Wall -Wextra -Werror $(INTN) $(INTE)
 
 ifdef CILKPLUS
 CPPFLAGS += -DPARLAY_CILKPLUS -DCILK -fcilkplus
@@ -48,7 +52,7 @@ Connectivity: Connectivity.h Connectivity.cpp ldd.hpp union_find_rules.h $(COMMO
 	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) Connectivity.cpp -o Connectivity
 
 scc: scc.hpp scc.cpp bfs.hpp reach.hpp $(COMMON)
-	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) scc.cpp -o scc
+	$(CC) $(CPPFLAGS) $(BREAK) $(RD) $(INCLUDE_PATH) scc.cpp -o scc
 
 LeList: LeList.hpp LeList.cpp resizable_table.h $(COMMON)
 	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) LeList.cpp -o LeList

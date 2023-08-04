@@ -336,15 +336,27 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   // ----------------first round, for the BIG SCC -------------------------
   NodeId source = P[0];
   // BFS BFS_P(graph);
-#if defined(BREAKDOWN)
+  #if defined(BREAKDOWN)
   first_round_timer.start();
-#endif
+  #endif
   REACH REACH_P(graph);
   // forward search
+  #ifdef ROUND
+  int fowd_depth = REACH_P.reach(source, dist_1, local_reach);
+  #else
   REACH_P.reach(source, dist_1, local_reach);
+  #endif
   // backward search
   REACH_P.swap_graph();
+  #ifdef ROUND
+  int bawd_depth = REACH_P.reach(source, dist_2, local_reach);
+  #else
   REACH_P.reach(source, dist_2, local_reach);
+  #endif
+  #ifdef ROUND
+  printf("Single Reach forward search depth %d\n", fowd_depth);
+  printf("Single Reach backward search depth %d\n", bawd_depth);
+  #endif
 
   REACH_P.swap_graph();
   NodeId label = label_offset;
@@ -412,15 +424,12 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*out_table_ne);
     table_forw =
         gbbs::resizable_table<K, V, hash_kv>(out_table_m, empty, hash_kv());
+    #ifdef ROUND
+    int out_depth = multi_search_safe(labels, table_forw, true, local_scc);
+    #else
     multi_search_safe(labels, table_forw, true, local_scc);
+    #endif
     t_search.stop();
-    // #if defined(BREAKDOWN)
-    //     multi_search_timer.stop();
-    // #endif
-
-    // #if defined(BREAKDOWN)
-    //     multi_search_timer.start();
-    // #endif
     t_search.start();
     // size_t in_table_m = max((size_t)min((NodeId)ceil(0.35*n_remaining),
     // (NodeId)6000000), (size_t)(beta)*in_table_ne);
@@ -429,8 +438,13 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
                 (size_t)(beta)*in_table_ne);
     table_back =
         gbbs::resizable_table<K, V, hash_kv>(in_table_m, empty, hash_kv());
+    #ifdef ROUND
+    int in_depth = multi_search_safe(labels, table_back, false, local_scc);
+    t_search.stop();
+    #else
     multi_search_safe(labels, table_back, false, local_scc);
     t_search.stop();
+    #endif
 
     label_offset += n_front;
     // std::cout << "in_table, m = " << table_back.m << " ne = " << table_back.ne
@@ -439,8 +453,10 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
     //           << "\n";
     // cout << "In search time " << backward_time << endl;
     // cout << "Out search time " << forward_time << endl;
-    // cout << "In search depth " << in_depth << endl;
-    // cout << "Out search depth " << out_depth << endl;
+    #ifdef ROUND
+    printf("round %d forward search depth %d\n", cur_round, out_depth);
+    printf("round %d backward search depth %d\n", cur_round, in_depth);
+    #endif
 
     auto& smaller_t = (table_forw.m <= table_back.m) ? table_forw : table_back;
     auto& larger_t = (table_forw.m > table_back.m) ? table_forw : table_back;

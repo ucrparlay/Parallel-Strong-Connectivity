@@ -9,6 +9,7 @@ import pandas as pd
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = f"{CURRENT_DIR}/../log"
+RESULT_DIR = f"{CURRENT_DIR}/../result"
 
 def geo_mean(iterable):
     a = np.array(iterable)
@@ -22,7 +23,7 @@ def collect_data(file_in, key_words):
     data = list(map(lambda x: eval(x.split(" ")[-1]), data_lines))
     return data
 
-def collect_exp1(RESULT_DIR):
+def collect_exp1():
     data = dict()
     algs={"Ours.par": "","Ours.seq": "_seq","Ours.spd":None,"GBBS.par": "_gbbs","GBBS.seq": "_gbbs_seq","GBBS.spd":None,"iSpan": "_ispan","MultiStep": "_multistep","SEQ": "_tarjan",
     }
@@ -62,7 +63,7 @@ def collect_exp1(RESULT_DIR):
     print(f"Figure1 Heatmap tabel is stored to {fig1_file}")
     heatdf.to_csv(fig1_file)
     
-def collect_exp5(RESULT_DIR):
+def collect_exp5():
     data = dict()
     algs = {"Our Connectivity": ("_cc", "average_time:"),"DHS21": ("_connectit", "### t ="), "CC:Spd.": (None,None), "Our LE-List": ("_lelist", "average cost:"),"parlaylib": ("_lelist_parlay", "Time: le_list:"), "LE-List:Spd.":(None,None)}
     for a, val in algs.items():
@@ -90,6 +91,27 @@ def collect_exp5(RESULT_DIR):
     table4_file = f"{RESULT_DIR}/Table4.csv"
     print(f"Table 4 is stored to {table4_file}")
     df.to_csv(table4_file)
-
-collect_exp1(f"{CURRENT_DIR}/../result")
-collect_exp5(f"{CURRENT_DIR}/../result")
+def collect_exp2():
+    graphs = ["TW", "SD", "CW", "SQR_s", "GL5", "COS5"]
+    data = dict()
+    threads = [192, 96, 48,24,12,8,4,2,1]
+    file_out = f"{RESULT_DIR}/Figure7.csv"
+    algorithms = {"Ours":"scc", "GBBS": "gbbs", "iSpan": "ispan", "MultiStep":"multistep"}
+    for g in graphs:
+        data[g] = dict()
+        for a, surfix in algorithms.items():
+            key_words = "average cost" if (a != "GBBS") else "# time per iter"
+            try:
+                data[g][a]=collect_data(f"{LOG_DIR}/exp2/{g}_scale_{surfix}.out", key_words)
+            except:
+                data[g][a]=[float('nan')]*len(threads)
+    with open(file_out, 'a') as f:
+        for g in graphs:
+            f.write(f"graph {g}\n")
+            df = pd.DataFrame.from_dict(data[g])
+            df = df.set_axis(threads)
+            df.to_csv(f)
+            f.write("\n")
+# collect_exp1()
+# collect_exp5()
+# collect_exp2()
