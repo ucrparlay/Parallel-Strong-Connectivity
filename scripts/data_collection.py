@@ -59,7 +59,7 @@ def collect_exp1():
     heatdf=pd.DataFrame.from_dict(relative_data)
     heatdf = heatdf.set_axis(dir_graphs.keys()).T
     heatdf["OverallMean"] = heatdf[dir_graphs.keys()].apply(lambda row: geo_mean(row[~row.isna()]), axis=1)
-    fig1_file = f"{RESULT_DIR}/Fig1.csv"
+    fig1_file = f"{RESULT_DIR}/Figure1.csv"
     print(f"Figure1 Heatmap tabel is stored to {fig1_file}")
     heatdf.to_csv(fig1_file)
     
@@ -150,7 +150,30 @@ def collect_exp3():
             df = df.set_axis(["Trimming", "First SCC", "Multi-search","Hash Table Resizing", "Others"])
             df.to_csv(f)
             f.write("\n")
+def collect_exp4():
+    threads=[192, 96, 48, 24, 4]
+    tau = [f"2^{i}" for i in range(18)]
+    data = dict()
+    file_out = f"{RESULT_DIR}/Figure11.csv"
+    graphs = ["TW", "SD", "CW", "GL5", "COS5","SQR_s"]
+    for g in graphs:
+        data[g]=dict()
+        try:
+            for thread in threads:
+                data[g][thread]=collect_data(f"{LOG_DIR}/exp4/{g}_{thread}.out", "average cost")
+        except:
+            for thread in threads:
+                data[g][thread]=[float('nan')]*len(tau)
+    print(f"Parameter tau information is writen to {file_out}")
+    with open(file_out, 'a') as f:
+        for g in graphs:
+            f.write(f"graph {g}\n")
+            df = pd.DataFrame.from_dict(data[g])
+            df=df.set_axis(tau)
+            df.to_csv(f)
+            f.write("\n")
 # collect_exp1()
 # collect_exp5()
 # collect_exp2()
-collect_exp3()
+# collect_exp3()
+collect_exp4()
