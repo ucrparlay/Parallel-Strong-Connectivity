@@ -9,7 +9,8 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 
 ### Requirements 
 
-- Multi-processor machine (tested on CentOS 8 and MacOS 10 & 13)
+- Multi-processor machine (tested on CentOS 8)
+- Linux OS
 
 * g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
 
@@ -38,21 +39,6 @@ We provide 3 small directed graphs as examples. They are located in `./data/dire
 make -j
 python3 scripts/test.py
 ``` -->
-
-### Download Graphs
-
-- Download the all graphs to `./data`
-
-  ``` python3 scripts/download.py```
-
-These command will download the directed graphs to `./data/dir` and undirected graphs to `./data/sym` that are used in this paper. It not download successful because of the band width limitation of dropbox. You can try to download them another day.
-
-You can also download graphs manually from this link [google drive](https://drive.google.com/drive/folders/1ZuhfaLmdL-EyOiWYqZGD1rOy_oSFRWe4?usp=sharing).
-
-We use the `.bin` binary graph format from [GBBS](https://github.com/ParAlg/gbbs).
-
-We comment out `clueweb`, `hyperlink2014` and `hyperlink2012`, since their large sizes (166GB, 253GB and 1013GB) are too large to fit in dropbox. If you want to run these graphs, you can contact us and run on our server. To run them on our server, just uncomment them in `./scripts/graphs.py`. 
-
 <!-- For ClueWeb, it is too large to fit in dropbox. You can find it at [Web Data Commons](http://webdatacommons.org/hyperlinkgraph/). -->
 
 
@@ -70,45 +56,80 @@ We comment out `clueweb`, `hyperlink2014` and `hyperlink2012`, since their large
 - Memory: 1510 GB
 - Operation system: CentOS Stream 8
 
+Our scalability test script is written based on the above Machine information. When we run with fewer cores, try to run the code on the same socket.
+
 ## Replicability
+### Step Zero: Download Graphs
+- Download the all graphs to `./data`
+
+  ``` python3 scripts/download.py```
+
+These command will download the directed and undirected graphs to `./data` that are used in this paper. The file name of undirected graphs is ended by "_sym.bin". It may not download successful because of the band width limitation of dropbox. You can try to download them another day.
+
+<!-- You can also download graphs manually from this link [google drive](https://drive.google.com/drive/folders/1ZuhfaLmdL-EyOiWYqZGD1rOy_oSFRWe4?usp=sharing). -->
+
+We use the `.bin` binary graph format from [GBBS](https://github.com/ParAlg/gbbs).
+
+We comment out `clueweb`, `hyperlink2014` and `hyperlink2012`, since their large sizes (166GB, 253GB and 1013GB) are too large to fit in dropbox. If you want to run these graphs, you can contact us by [email](lwang323@ucr.edu) and run on our server. 
 
 
+### Step One: Run Experiments
+The scripts of running experiment are under `./scripts` folder.
+- Experiment 1: Testing the running times (in seconds) of all tested algorithms on SCC. It will generate the data listed in `Table 3` and `Figure 1` in the paper.
+
+  ``` python3 scripts/Experiment1.py ```
+  
+  The output files are stored in `./log/exp1`.
+- Experiment 2: Testing the speedup over Tarjan’s sequential algorithm for different
+algorithms on different numbers of processors (Scalability). It will generate the data used in `Figure 7` and `Figure 8` in the paper. 
+
+  ```python3 scripts/Experiment2.py```
+
+  The output files are stored in `./log/exp2`.
+- Experiment 3: Testing the SCC breakdown time. It will generate the data used in `Figure 9` in the paper.
+
+  ```python3 scripts/Experiment3.py```
+
+  The output files are stored in `./log/exp3`.
+- Experiment 4: Testing the relative running time of $\tau=1$ on six graphs with $\tau$ range from $2^0$ to $2^{17}$. It will generate the data used in `Figure 11` in the paper.
+
+  ```python3 scripts/Experiment4.py```
+  
+  The output files are stored in `./log/exp4`.
+- Experiment 5:  Testing the running time of connectivity and LE-Lists implementations. It will generate the data listed in `Table 4` in the paper.
+
+  ```python3 scripts/Experiment5.py```
+
+  The output files are stored in `./log/exp5`.
+- Experiment 6: Testing the number of rounds with and without VGC for each reachability search. It will generate the data used in `Figure 10` in the paper.
+
+  ```python3 scripts/Experiment6.py```
+
+  The output files are stored in `./log/exp6`.
+
+### Step Two: Collect Data
+It will collect the data in `./log` folder, and generate the `.csv` format files in `./result`
+
+```python3 scripts/data_collection.py```
+
+
+### Step Three: Draw Figures
+It will use the data in `./result` folder to generate figures of `.pdf` format in `./figures`.
+Note that since Figure 1 is essentially a table, it is not in `./figures`. But `Figure1.cvs` is in `./result` folder among with `Table3.csv` and `Table4.csv`
 
 
 
 ## Developing
-
-### Prerequisites 
-* g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
-
-> **_NOTE:_**  It does not compile with g++-8, which is a known bug that we are working on. It works with g++-7, g++-9, g++-11, and g++-12.  
-
-### Setting up 
-Download the library
-```shell
-wget -c -O Parallel-Strong-Connectivity.zip "https://www.dropbox.com/s/q3ri2xj31o2awuo/Parallel-Strong-Connectivity.zip?dl=1"  
-unzip Parallel-Strong-Connectivity.zip   
-cd Parallel-Strong-Connectivity/  
-```
-
-## Example
-To try the toy examples in this repository, first download the dataset with:  
-```shell
-./scripts/download_dataset.sh  
-```
-And run all three applications (SCC, Connectivity, LE-lists) with:  
-```shell
-./scripts/run_all.sh  
-```
-Then the result will be save in the ``result/`` folder.  
-
-## Building
-Alternatively, users can compile the code on their own. A makefile is given under the folder ``src/``, you can compile the code by:  
+### Build
+Users can compile the code on their own. A makefile is given under the folder ``src/``, you can compile the code by:  
 ```shell
 make 
 ```
-
-## Usage
+To let the SCC code output the breakdown time/number of rounds/run scc serial, compile the code with flag "BREAKDOWN=1"/"ROUND=1"/"SERIAL=1", such as:
+```shell 
+make scc BREAKDOWN=1
+``` 
+### Usage
 ```shell
 ./application [input_graph]  
 ```
@@ -122,10 +143,19 @@ To enable local search in single-reachability and multi-reachability, add the "-
 ./scc [input_graph] -local_reach -local_scc  
 ```
 
-The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. For storage limit, we only provide two sample binary graphs in an anonymous [Google Drive](https://drive.google.com/drive/folders/1ztlrVgfLlmbR-McyhiRCtDYoMcR9Tyq3?usp=sharing) folder. We will provide all tested graphs in the camera-ready version.  
+The application can auto-detect the format of the input graph based on the suffix of the filename. It supports the adjacency graph format from [Problem Based Benchmark suite](http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), whose filename should end with ".adj". It also supports binary representation. 
 
 If you are running our code on a machine with more than one socket, **numactl** can potentially improve the performance.  
 ```shell
 numactl -i all ./scc [input_graph]  
 ```
 
+If you want to know the number of SCC and Largest SCC size, you can set option `-stats`.
+```shell
+numactl -i all ./scc [input_graph] -status
+```
+
+If you want to set the number of threads and specify the cores used to run the code, you can set "PARLAY_NUM_THREADS" and "taskset -c". For example, if you want to run on 24 threads and cores 0,4,8,12,...92, you can run:
+```shell
+PARLAY_NUM_THREADS=24 taskset -c 0-95:4 numactl -i all ./scc [input_graph]
+```

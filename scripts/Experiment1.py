@@ -115,8 +115,8 @@ def run_iSpan():
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 1
-    seq_rounds = 1
+    par_rounds = 10
+    seq_rounds = 3
     run_parallel()
     run_GBBS()
     run_MultiStep()

@@ -68,8 +68,8 @@ def run_LeList_parlay():
         subprocess.call(cmd, shell=True)
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 1
-    seq_rounds = 1
+    par_rounds = 10
+    seq_rounds = 3
     run_Connectivity()
     run_LeList()
     run_ConnectIt()

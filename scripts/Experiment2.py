@@ -25,7 +25,7 @@ def run_GBBS_scale(graph_key, file_out, n_thread, cores):
     scc = f"{GBBS_DIR}/bazel-bin/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/StronglyConnectedComponents_main"
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph_key][0]}.bin"
     numa = "" if (n_thread==1) else "numactl -i all"
-    cmd= f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {numa} {scc} -b -beta 1.5 -rounds {par_rounds} {file_in} | tee -a {file_out}"
+    cmd= f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} -b -beta 1.5 -rounds {par_rounds} {file_in} | tee -a {file_out}"
     subprocess.call(cmd, shell=True)
 def run_iSpan_scale(graph_key, file_out, n_thread, cores):
     iSpan_DIR = f"{CURRENT_DIR}/../baselines/iSpan/src"
@@ -71,7 +71,7 @@ def run_scale(graph):
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 1
+    par_rounds = 10
     print("compile algorithms")
     subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B -j 8', shell=True)
     subprocess.call(f"cd {CURRENT_DIR}/../baselines/gbbs && bazel build //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)

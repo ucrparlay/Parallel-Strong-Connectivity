@@ -44,5 +44,5 @@ def run_breakdown():
             continue    
 
 if __name__ == "__main__":
-    par_rounds = 1
+    par_rounds = 10
     run_breakdown()
