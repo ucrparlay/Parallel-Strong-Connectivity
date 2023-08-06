@@ -2,10 +2,6 @@ ifdef BREAKDOWN
 BREAK = -DBREAKDOWN
 endif
 
-ifdef ROUND
-RD = -DROUND
-endif
-
 ifdef NLONG
 INTN = -DNLONG
 endif
@@ -46,16 +42,19 @@ endif
 
 COMMON = graph.hpp parseCommandLine.hpp utilities.h get_time.hpp hash_bag.h resizable_table.h
 
-all: Connectivity scc LeList
+all: Connectivity scc scc_round LeList
 
 Connectivity: Connectivity.h Connectivity.cpp ldd.hpp union_find_rules.h $(COMMON)
 	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) Connectivity.cpp -o Connectivity
 
 scc: scc.hpp scc.cpp bfs.hpp reach.hpp $(COMMON)
-	$(CC) $(CPPFLAGS) $(BREAK) $(RD) $(INCLUDE_PATH) scc.cpp -o scc
+	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) scc.cpp -o scc
+
+scc_round: scc.hpp scc.cpp bfs.hpp reach.hpp $(COMMON)
+	$(CC) $(CPPFLAGS) -DROUND $(INCLUDE_PATH) scc.cpp -o scc_round
 
 LeList: LeList.hpp LeList.cpp resizable_table.h $(COMMON)
 	$(CC) $(CPPFLAGS) $(INCLUDE_PATH) LeList.cpp -o LeList
 
 clean:
-	rm Connectivity scc LeList
+	rm Connectivity scc scc_round LeList

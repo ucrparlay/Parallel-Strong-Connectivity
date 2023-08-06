@@ -71,9 +71,7 @@ int main(int argc, char** argv) {
     cout << "scc cost: " << scc_cost << endl;
   }
   cout << "average cost " << t.get_total() / repeat << endl;
-#if defined(BREAKDOWN)
   SCC_P.breakdown_report(repeat);
-#endif
   if (P.getOption("-status")) SCC_status(label, graph.n);
 
   return 0;

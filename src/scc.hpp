@@ -91,23 +91,18 @@ class SCC {
         n, {UINT_N_MAX, UINT_N_MAX}, hash_kv());
   }
 
-#if defined(BREAKDOWN)
   timer init_timer;
   timer first_round_timer;
   timer multi_search_timer;
   timer multi_search_safe_timer;
-#endif
   timer scc_timer;
   void timer_reset() {
-#if defined(BREAKDOWN)
     init_timer.reset();
     first_round_timer.reset();
     multi_search_timer.reset();
     multi_search_safe_timer.reset();
-#endif
     scc_timer.reset();
   }
-#if defined(BREAKDOWN)
   void breakdown_report(int repeat) {
     cout << "average init_time " << init_timer.get_total() / repeat << endl;
     cout << "average first_round_time "
@@ -117,7 +112,6 @@ class SCC {
     cout << "average hash table resize time "
         << (multi_search_safe_timer.get_total()-multi_search_timer.get_total())/repeat << endl;
   }
-#endif
 };
 
 bool SCC::edge_map(NodeId cur_node, NodeId ngb_node,
@@ -263,38 +257,26 @@ int SCC::multi_search_safe(sequence<size_t>& labels,
                            gbbs::resizable_table<K, V, hash_kv>& table,
                            bool forward, bool local) {
   int round;
-  #if defined(BREAKDOWN)
   multi_search_safe_timer.start();
   double multi_search_time=0;
-  #endif
   
   while (true){
-    #if defined(BREAKDOWN)
     multi_search_timer.start();
-    #endif
     round = multi_search(labels, table, forward, local);
-    #if defined(BREAKDOWN)
     multi_search_time=multi_search_timer.stop();
-    #endif
     if (round != -1){break;}
     cout << "trigger table resize" << endl;
-    #if defined(BREAKDOWN)
     multi_search_timer.total_time -= multi_search_time;
-    #endif
     parallel_for(0, graph.n, [&](size_t i) { bits[i] = 0; });
     table.double_size();
   }
-  #if defined(BREAKDOWN)
   multi_search_safe_timer.stop();
-  #endif
   return round;
 }
 
 void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
               bool local_scc) {
-#if defined(BREAKDOWN)
   init_timer.start();
-#endif
   scc_timer.reset();
   scc_timer.start();
   current_stamp = 1;
@@ -321,9 +303,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   auto P = parlay::random_shuffle(NON_ZEROS);
   parallel_for(0, ZEROS.size(),
                [&](NodeId i) { labels[ZEROS[i]] = 1 + (i | TOP_BIT); });
-#if defined(BREAKDOWN)
   init_timer.stop();
-#endif
 
   // cout << "------------------------------------" << endl;
   // cout << "initial time " << scc_timer.stop() << endl;
@@ -336,9 +316,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   // ----------------first round, for the BIG SCC -------------------------
   NodeId source = P[0];
   // BFS BFS_P(graph);
-  #if defined(BREAKDOWN)
   first_round_timer.start();
-  #endif
   REACH REACH_P(graph);
   // forward search
   #ifdef ROUND
@@ -369,9 +347,7 @@ void SCC::scc(sequence<size_t>& labels, double beta, bool local_reach,
   });
 
   centers = parlay::filter(P, [&](NodeId v) { return !(labels[v] & TOP_BIT); });
-  #if defined(BREAKDOWN)
   first_round_timer.stop();
-  #endif
   #if defined(DEBUG)
   // cout << "First Round Time " << scc_timer.stop() << endl;
   // scc_timer.start();
