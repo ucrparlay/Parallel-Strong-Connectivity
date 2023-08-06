@@ -1,5 +1,6 @@
 from graphs import dir_graphs
 from graphs import GRAPH_DIR
+from algorithms import Algorithms
 import subprocess
 import os
 import multiprocessing
@@ -9,20 +10,18 @@ os.makedirs(f"{CURRENT_DIR}/../log", exist_ok=True)
 os.makedirs(f"{CURRENT_DIR}/../log/exp6", exist_ok=True) 
 def SCC_ROUND(graph, file_out):
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
-    scc = f'{CURRENT_DIR}/../src/scc'
-    cmd_plain=f"numactl -i all {scc} {file_in} -t 0 | tee -a {file_out}"
-    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc | tee -a {file_out}"
+    scc = Algorithms["Ours_scc_round"]
+    dlong = "-long" if (graph=="HL12") else ""
+    cmd_plain=f"numactl -i all {scc} {file_in} -t 0 {dlong} >> {file_out}"
+    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc {dlong} >>{file_out}"
     cmds = [cmd_plain, cmd_final]
     for cmd in cmds:
         subprocess.call(cmd, shell=True)
 def run_SCC_ROUND():
-    print("compile algorithms")
-    subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B ROUND=1 -j 8', shell=True)
-    graphs = ["LJ", "TW", "SD", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
+    graphs = ["LJ", "TW", "SD", "CW", "HL12", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
     for g in graphs:
-        try:
-            SCC_ROUND(g, f"{CURRENT_DIR}/../log/exp6/{g}_round.out")
-        except:
+        if (g not in dir_graphs.keys()):
             continue
+        SCC_ROUND(g, f"{CURRENT_DIR}/../log/exp6/{g}_round.out")
 if __name__ == "__main__":
     run_SCC_ROUND()

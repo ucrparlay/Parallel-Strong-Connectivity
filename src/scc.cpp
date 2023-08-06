@@ -39,12 +39,7 @@ int main(int argc, char** argv) {
   t1.start();
   double beta = P.getOptionDouble("-beta", 1.5);
   cout << "--beta " << beta << "--" << endl;
-
-  // Graph graph = read_graph(
-  //     fileName, !P.getOption("-nmmap"));  // symmetric : 1, makeSymmetric; 2,
-  //                                         // makeDirected // binary
-  Graph graph = read_graph(fileName);
-  // Graph graph = read_large_graph(fileName);
+  Graph graph = P.getOption("-large")? read_large_graph(fileName):read_graph(fileName);
   bool local_reach = P.getOption("-local_reach");
   bool local_scc = P.getOption("-local_scc");
   _min_bag_size_ = P.getOptionInt("-lambda", 1 << 10);

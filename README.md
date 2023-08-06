@@ -10,7 +10,6 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 ### Requirements 
 
 - Multi-processor machine (tested on CentOS 8)
-- Linux OS
 
 * g++ &gt;= 7 with support for C++17 features (Tested with g++ 7.5.0)
 

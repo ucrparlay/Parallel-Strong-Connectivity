@@ -27,7 +27,8 @@ int main(int argc, char** argv) {
   }
   char* fileName = argv[1];
   cout << "input graph: "<< fileName << endl;
-  Graph graph = read_graph(fileName);
+  // Graph graph = read_graph(fileName);
+  Graph graph = P.getOption("-large")? read_large_graph(fileName):read_graph(fileName);
   cout << "number of vertices: " << graph.n << ", number of edges: " << graph.m << endl;
 
 

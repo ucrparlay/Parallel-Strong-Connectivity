@@ -1,5 +1,6 @@
 from graphs import dir_graphs
 from graphs import GRAPH_DIR
+from algorithms import Algorithms
 import subprocess
 import os
 import multiprocessing
@@ -11,12 +12,13 @@ os.makedirs(f"{CURRENT_DIR}/../log/exp4", exist_ok=True)
 global par_rounds
 Tau = [2**i for i in range(18)]
 def SCC_tau(graph, n_thread, cores, file_out):
-    scc = f'{CURRENT_DIR}/../src/scc'
+    scc = Algorithms["Ours_scc"]
     numa = "" if (n_thread==1) else "numactl -i all"
-    print(f"Running on graph {graph}")
+    dlong = "-long" if (graph=="HL12") else ""
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
     for tau in Tau:
-        cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} -local_reach -local_scc -tau {tau} -t {par_rounds} | tee -a {file_out}"
+        print(f"Running SCC on graph {graph} with tau={tau} {n_thread} threads")
+        cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} -local_reach -local_scc -tau {tau} -t {par_rounds} {dlong} >> {file_out}"
         subprocess.call(cmd, shell=True)
 
 def SCC_tau_scale(graph):
@@ -25,14 +27,11 @@ def SCC_tau_scale(graph):
         file_out = f"{CURRENT_DIR}/../log/exp4/{graph}_{thread}.out"
         SCC_tau(graph, thread, cores, file_out)
 def run_SCC_tau_scale():
-    print("compile algorithms")
-    subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B -j 8', shell=True)
     graphs = ["TW", "SD", "CW", "GL5", "COS5","SQR_s"]
     for g in graphs:
-        try:
-            SCC_tau_scale(g)
-        except:
+        if g not in dir_graphs.keys():
             continue
+        SCC_tau_scale(g)
 if __name__ == "__main__":
     global par_rounds
     par_rounds = 10

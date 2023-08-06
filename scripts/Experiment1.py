@@ -6,6 +6,7 @@
 # The directed output of executing the code will be output to folder '../log/exp1'
 from graphs import dir_graphs
 from graphs import GRAPH_DIR
+from algorithms import Algorithms
 import subprocess
 import os
 import multiprocessing
@@ -17,72 +18,62 @@ os.makedirs(f"{CURRENT_DIR}/../log/exp1", exist_ok=True)
 global par_rounds
 global seq_rounds
 # Parallel Running Time
-def run_parallel():
+def Our_scc():
     print("Testing Our Parallel SCC Running Time")
-    subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B -j 8', shell=True)
-    # For each experiment, run 11 times and take the average of the last 10 time
-    scc = f'{CURRENT_DIR}/../src/scc'
     for key, val in dir_graphs.items():
         graph = val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}.out"
-        print(f"Running {key}")
-        cmd = f"numactl -i all {scc} {graph_in} -local_reach -local_scc -t {par_rounds} | tee -a {log_out}"
+        print(f"Running on {key}")
+        dlong = "-long" if (key=="HL12") else ""
+        cmd = f'''numactl -i all {Algorithms["Ours_scc"]} {graph_in} {dlong} -local_reach -local_scc -t {par_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
-def run_serial():
+def Our_scc_serial():
     print("Testing Our Sequential SCC Running Time")
-    subprocess.call(f'cd {CURRENT_DIR}/../src && make scc -B SERIAL=1 -j 8', shell=True)
-    # For each experiment, run 11 times and take the average of the last 10 time
-    scc = f'{CURRENT_DIR}/../src/scc'
     for key, val in dir_graphs.items():
         graph = val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_seq.out"
-        print(f"Running {key}")
-        cmd = f"{scc} {graph_in} -local_reach -local_scc -t {seq_rounds} | tee -a {log_out}"
+        print(f"Running on {key}")
+        dlong = "-long" if (key=="HL12") else ""
+        cmd = f'''{Algorithms["Ours_scc_serial"]} {graph_in} {dlong} -local_reach -local_scc -t {seq_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
-def run_Tarjan():
+def Tarjan_scc():
     print("Testing SCC Baselines: Tarjan's Algorithm")
-    subprocess.call(f'cd {CURRENT_DIR}/../baselines/tarjan_scc && make SERIAL=1 -B', shell=True)
-    scc = f'{CURRENT_DIR}/../baselines/tarjan_scc/tarjan_scc'
     for key, val in dir_graphs.items():
         graph = val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_tarjan.out"
-        print(f"Running {key}")
-        cmd = f"ulimit -s unlimited && {scc} {graph_in} -t {seq_rounds} | tee -a {log_out}"
+        print(f"Running on {key}")
+        dlong = "-long" if (key=="HL12") else ""
+        cmd = f'''ulimit -s unlimited && {Algorithms["Tarjan"]} {graph_in} {dlong} -t {seq_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
-def run_GBBS():
+def GBBS_scc():
     print("Testing SCC Baselines: Parallel GBBS")
-    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs"
-    subprocess.call(f"cd {GBBS_DIR} && bazel build //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)
-    scc = f"{GBBS_DIR}/bazel-bin/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/StronglyConnectedComponents_main"
     for key, val in dir_graphs.items():
         graph=val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs.out"
-        cmd= f"numactl -i all {scc} -b -beta 1.5 -rounds {par_rounds} {graph_in} | tee -a {log_out}"
+        print(f"Running on {key}")
+        dlong = "-long" if (key=="HL12") else ""
+        cmd= f'''numactl -i all {Algorithms["GBBS_scc"]} {dlong} -b -beta 1.5 -rounds {par_rounds} {graph_in} >> {log_out}'''
         subprocess.call(cmd, shell=True)
-def run_GBBS_serial():
+def GBBS_scc_serial():
     print("Testing SCC Baselines: Parallel GBBS")
-    GBBS_DIR = f"{CURRENT_DIR}/../baselines/gbbs"
-    subprocess.call(f"cd {GBBS_DIR} && bazel build --config=serial //benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/...", shell=True)
-    scc = f"{GBBS_DIR}/bazel-bin/benchmarks/StronglyConnectedComponents/RandomGreedyBGSS16/StronglyConnectedComponents_main"
     for key, val in dir_graphs.items():
         graph=val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs_seq.out"
-        cmd= f"{scc} -b -beta 1.5 -rounds {seq_rounds} {graph_in} | tee -a {log_out}"
+        print(f"Running on {key}")
+        dlong = "-long" if (key=="HL12") else ""
+        cmd= f'''{Algorithms["GBBS_scc_serial"]} {dlong} -b -beta 1.5 -rounds {seq_rounds} {graph_in} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
-def run_MultiStep():
+def MultiStep():
     print("Testing SCC Baselines: Parallal Multi-Step")
-    MultiStep_DIR = f"{CURRENT_DIR}/../baselines/MultiStep/multistep"
-    subprocess.call(f"cd {MultiStep_DIR} && make -B", shell=True)
-    scc = f"{MultiStep_DIR}/scc"
     skip_graphs={"CW", "HL14", "HL12"}
     for key, val in dir_graphs.items():
         if (key in skip_graphs):
@@ -90,13 +81,11 @@ def run_MultiStep():
         graph=val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_multistep.out"
-        cmd= f"numactl -i all {scc} {graph_in} -t {par_rounds} | tee -a {log_out}"
+        print(f"Running on {key}")
+        cmd= f'''numactl -i all {Algorithms["MultiStep"]} {graph_in} -t {par_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
-def run_iSpan():
+def iSpan():
     print("Testing SCC Baselines: Parallel iSpan")
-    iSpan_DIR = f"{CURRENT_DIR}/../baselines/iSpan/src"
-    subprocess.call(f"cd {iSpan_DIR} && make -B", shell=True)
-    scc = f"{iSpan_DIR}/ispan"
     skip_graphs = {"TW", "CW", "HL14","HL12", "GL2", "GL5", "COS5"}
     thread_count = (multiprocessing.Pool())._processes
     alpha=30
@@ -109,18 +98,19 @@ def run_iSpan():
         graph = val[0]
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_ispan.out"
-        cmd = f"numactl -i all {scc} {graph_in} {thread_count} {alpha} {beta} {gamma} {theta} {par_rounds} | tee -a {log_out}"
+        print(f"Running on {key}")
+        cmd = f'''numactl -i all {Algorithms["iSpan"]} {graph_in} {thread_count} {alpha} {beta} {gamma} {theta} {par_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 10
-    seq_rounds = 3
-    run_parallel()
-    run_GBBS()
-    run_MultiStep()
-    run_iSpan()
-    run_Tarjan()
-    run_serial()
-    run_GBBS_serial()
+    par_rounds = 1
+    seq_rounds = 1
+    # Our_scc()
+    # Our_scc_serial()
+    # GBBS_scc()
+    # GBBS_scc_serial()
+    # MultiStep()
+    iSpan()
+    # Tarjan_scc()
