@@ -25,8 +25,8 @@ def Our_scc():
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}.out"
         print(f"Running on {key}")
-        dlong = "-long" if (key=="HL12") else ""
-        cmd = f'''numactl -i all {Algorithms["Ours_scc"]} {graph_in} {dlong} -local_reach -local_scc -t {par_rounds} >> {log_out}'''
+        dlarge = "-large" if (key=="HL12") else ""
+        cmd = f'''numactl -i all {Algorithms["Ours_scc"]} {graph_in} {dlarge} -local_reach -local_scc -t {par_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
 def Our_scc_serial():
@@ -36,8 +36,8 @@ def Our_scc_serial():
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_seq.out"
         print(f"Running on {key}")
-        dlong = "-long" if (key=="HL12") else ""
-        cmd = f'''{Algorithms["Ours_scc_serial"]} {graph_in} {dlong} -local_reach -local_scc -t {seq_rounds} >> {log_out}'''
+        dlarge = "-large" if (key=="HL12") else ""
+        cmd = f'''{Algorithms["Ours_scc_serial"]} {graph_in} {dlarge} -local_reach -local_scc -t {seq_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
 def Tarjan_scc():
@@ -47,8 +47,8 @@ def Tarjan_scc():
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_tarjan.out"
         print(f"Running on {key}")
-        dlong = "-long" if (key=="HL12") else ""
-        cmd = f'''ulimit -s unlimited && {Algorithms["Tarjan"]} {graph_in} {dlong} -t {seq_rounds} >> {log_out}'''
+        dlarge = "-large" if (key=="HL12") else ""
+        cmd = f'''ulimit -s unlimited && {Algorithms["Tarjan"]} {graph_in} {dlarge} -t {seq_rounds} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
 def GBBS_scc():
@@ -58,8 +58,8 @@ def GBBS_scc():
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs.out"
         print(f"Running on {key}")
-        dlong = "-long" if (key=="HL12") else ""
-        cmd= f'''numactl -i all {Algorithms["GBBS_scc"]} {dlong} -b -beta 1.5 -rounds {par_rounds} {graph_in} >> {log_out}'''
+        dlarge = "-large" if (key=="HL12") else ""
+        cmd= f'''numactl -i all {Algorithms["GBBS_scc"]} {dlarge} -b -beta 1.5 -rounds {par_rounds} {graph_in} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 def GBBS_scc_serial():
     print("Testing SCC Baselines: Parallel GBBS")
@@ -68,8 +68,8 @@ def GBBS_scc_serial():
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp1/{key}_gbbs_seq.out"
         print(f"Running on {key}")
-        dlong = "-long" if (key=="HL12") else ""
-        cmd= f'''{Algorithms["GBBS_scc_serial"]} {dlong} -b -beta 1.5 -rounds {seq_rounds} {graph_in} >> {log_out}'''
+        dlarge = "-large" if (key=="HL12") else ""
+        cmd= f'''{Algorithms["GBBS_scc_serial"]} {dlarge} -b -beta 1.5 -rounds {seq_rounds} {graph_in} >> {log_out}'''
         subprocess.call(cmd, shell=True)
 
 def MultiStep():
@@ -105,12 +105,12 @@ def iSpan():
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 10
+    par_rounds = 1
     seq_rounds = 3
     Our_scc()
-    Our_scc_serial()
+    # Our_scc_serial()
     GBBS_scc()
-    GBBS_scc_serial()
-    MultiStep()
-    iSpan()
+    # GBBS_scc_serial()
+    # MultiStep()
+    # iSpan()
     Tarjan_scc()

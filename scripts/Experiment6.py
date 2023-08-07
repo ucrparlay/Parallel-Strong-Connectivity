@@ -11,9 +11,9 @@ os.makedirs(f"{CURRENT_DIR}/../log/exp6", exist_ok=True)
 def SCC_ROUND(graph, file_out):
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
     scc = Algorithms["Ours_scc_round"]
-    dlong = "-long" if (graph=="HL12") else ""
-    cmd_plain=f"numactl -i all {scc} {file_in} -t 0 {dlong} >> {file_out}"
-    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc -status {dlong} >>{file_out}"
+    dlarge = "-large" if (graph=="HL12") else ""
+    cmd_plain=f"numactl -i all {scc} {file_in} -t 0 {dlarge} >> {file_out}"
+    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc -status {dlarge} >>{file_out}"
     cmds = [cmd_plain, cmd_final]
     for cmd in cmds:
         subprocess.call(cmd, shell=True)

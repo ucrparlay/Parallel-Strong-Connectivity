@@ -21,9 +21,10 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
   - matplotlib (used to draw figures)
   - seaborn (used to draw figures) 
 - We use [parlaylib](https://github.com/cmuparlay/parlaylib) for fork-join parallelism and some primative.
-- numactl (used for arrange memory on different sockets)
+- numactl (used to arrange memory on different sockets)
 - We include the baselines in the folder `baselines`
 - [Bazel](https://bazel.build/install) 2.1.0 (used to compile the baseline 'gbbs')
+- cmake 3.14+ (used to compile the baseline "parlay")
 ### Get Started
 
 Code download: git clone with submodules

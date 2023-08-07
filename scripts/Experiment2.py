@@ -16,17 +16,17 @@ def SCC_scale(graph_key, file_out, n_thread, cores):
     scc = Algorithms["Ours_scc"]
     numa = "" if (n_thread==1) else "numactl -i all"
     print(f"Running Our SCC on graph {graph_key} with {n_thread} threads")
-    dlong = "-long" if (graph_key=="HL12") else ""
+    dlarge = "-large" if (graph_key=="HL12") else ""
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph_key][0]}.bin"
-    cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} {dlong} -local_reach -local_scc -t {par_rounds} >> {file_out}"
+    cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} {dlarge} -local_reach -local_scc -t {par_rounds} >> {file_out}"
     subprocess.call(cmd, shell=True)
 def GBBS_scale(graph_key, file_out, n_thread, cores):
     scc = Algorithms["GBBS_scc"]
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph_key][0]}.bin"
     numa = "" if (n_thread==1) else "numactl -i all"
     print(f"Running GBBS SCC on graph {graph_key} with {n_thread} threads")
-    dlong = "-long" if (graph_key=="HL12") else ""
-    cmd= f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {dlong} -b -beta 1.5 -rounds {par_rounds} {file_in} >> {file_out}"
+    dlarge = "-large" if (graph_key=="HL12") else ""
+    cmd= f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {dlarge} -b -beta 1.5 -rounds {par_rounds} {file_in} >> {file_out}"
     subprocess.call(cmd, shell=True)
 def iSpan_scale(graph_key, file_out, n_thread, cores):
     scc = Algorithms["iSpan"]

@@ -14,11 +14,11 @@ Tau = [2**i for i in range(18)]
 def SCC_tau(graph, n_thread, cores, file_out):
     scc = Algorithms["Ours_scc"]
     numa = "" if (n_thread==1) else "numactl -i all"
-    dlong = "-long" if (graph=="HL12") else ""
+    dlarge = "-large" if (graph=="HL12") else ""
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
     for tau in Tau:
         print(f"Running SCC on graph {graph} with tau={tau} {n_thread} threads")
-        cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} -local_reach -local_scc -tau {tau} -t {par_rounds} {dlong} >> {file_out}"
+        cmd = f"PARLAY_NUM_THREADS={n_thread} taskset -c {cores} {numa} {scc} {file_in} -local_reach -local_scc -tau {tau} -t {par_rounds} {dlarge} >> {file_out}"
         subprocess.call(cmd, shell=True)
 
 def SCC_tau_scale(graph):
@@ -34,5 +34,5 @@ def run_SCC_tau_scale():
         SCC_tau_scale(g)
 if __name__ == "__main__":
     global par_rounds
-    par_rounds = 10
+    par_rounds = 1
     run_SCC_tau_scale()

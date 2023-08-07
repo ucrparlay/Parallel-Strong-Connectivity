@@ -7,7 +7,7 @@
 # The directed output of executing the code will be output to folder '../log/exp1'
 from graphs import sym_graphs
 from graphs import GRAPH_DIR
-from algorithms import Alg
+from algorithms import Algorithms
 import subprocess
 import os
 import multiprocessing
@@ -17,7 +17,6 @@ os.makedirs(f"{CURRENT_DIR}/../log", exist_ok=True)
 os.makedirs(f"{CURRENT_DIR}/../log/exp5", exist_ok=True)  
 
 global par_rounds
-global seq_rounds
 def run_Connectivity():
     print("Testing Our Parallel Connectivity Running Time")
     # For each experiment, run 11 times and take the average of the last 10 time
@@ -61,9 +60,8 @@ def run_LeList_parlay():
         cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds +1} >> {log_out}"
         subprocess.call(cmd, shell=True)
 if __name__ == '__main__':
-    global par_rounds, seq_rounds
-    par_rounds = 10
-    seq_rounds = 3
+    global par_rounds
+    par_rounds = 1
     run_Connectivity()
     run_LeList()
     run_ConnectIt()

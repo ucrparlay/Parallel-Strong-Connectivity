@@ -1,5 +1,6 @@
 from graphs import dir_graphs
 from graphs import GRAPH_DIR
+from algorithms import Algorithms
 import subprocess
 import os
 import multiprocessing
@@ -12,10 +13,10 @@ global par_rounds
 def SCC_breakdown(graph, file_out):
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
     scc = Algorithms["Ours_scc"]
-    dlong = "-long" if (graph=="HL12") else ""
-    cmd_plain=f"numactl -i all {scc} {file_in} {dlong} -t {par_rounds} >> {file_out}"
-    cmd_vgc1= f"numactl -i all {scc} {file_in} {dlong} -t {par_rounds} -local_reach >> {file_out}"
-    cmd_final = f"numactl -i all {scc} {file_in} {dlong} -t {par_rounds} -local_reach -local_scc >> {file_out}"
+    dlarge = "-large" if (graph=="HL12") else ""
+    cmd_plain=f"numactl -i all {scc} {file_in} {dlarge} -t {par_rounds} >> {file_out}"
+    cmd_vgc1= f"numactl -i all {scc} {file_in} {dlarge} -t {par_rounds} -local_reach >> {file_out}"
+    cmd_final = f"numactl -i all {scc} {file_in} {dlarge} -t {par_rounds} -local_reach -local_scc >> {file_out}"
     cmds = [cmd_plain, cmd_vgc1, cmd_final]
     print(f"Testing Our SCC Breakdown on graph {graph}")
     for cmd in cmds:
@@ -23,8 +24,8 @@ def SCC_breakdown(graph, file_out):
 def GBBS_breakdown(graph, file_out):
     file_in = f"{GRAPH_DIR}/{dir_graphs[graph][0]}.bin"
     GBBS_scc = Algorithms["GBBS_scc"]
-    dlong = "-long" if (graph=="HL12") else ""
-    cmd_gbbs= f"numactl -i all {GBBS_scc} {dlong} -b -beta 1.5 -rounds {par_rounds} {file_in} >> {file_out}"
+    dlarge = "-large" if (graph=="HL12") else ""
+    cmd_gbbs= f"numactl -i all {GBBS_scc} {dlarge} -b -beta 1.5 -rounds {par_rounds} {file_in} >> {file_out}"
     print(f"Testing GBBS Breakdown on graph {graph}")
     subprocess.call(cmd_gbbs, shell=True)
 
@@ -39,5 +40,5 @@ def run_breakdown():
         GBBS_breakdown(g, gbbs_out)
 
 if __name__ == "__main__":
-    par_rounds = 10
+    par_rounds = 1
     run_breakdown()
