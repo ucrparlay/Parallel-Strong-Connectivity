@@ -23,20 +23,22 @@ def run_Connectivity():
     cc = Algorithms["Ours_cc"]
     for key, val in sym_graphs.items():
         graph = val[0]
+        dlarge= "-large" if (graph=="HL12") else ""
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp5/{key}_cc.out"
         print(f"Running on {key}")
-        cmd = f"numactl -i all {cc} {graph_in} -t {par_rounds} >> {log_out}"
+        cmd = f"numactl -i all {cc} {graph_in} -t {par_rounds} {dlarge} >> {log_out}"
         subprocess.call(cmd, shell=True)
 def run_LeList():
     print("Testing Our Parallel LE-List Running Time")
     LeList = Algorithms['Ours_lelist']
     for key, val in sym_graphs.items():
         graph = val[0]
+        dlarge = "-large" if (graph=="HL12") else ""
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp5/{key}_lelist.out"
         print(f"Running on {key}")
-        cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds} >> {log_out}"
+        cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds} {dlarge} >> {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_ConnectIt():

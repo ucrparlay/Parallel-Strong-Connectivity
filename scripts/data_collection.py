@@ -47,7 +47,7 @@ def collect_exp1():
     data["Best/Ours"] = BestBaseline/data["Ours.par"]
     df = pd.DataFrame.from_dict(data)
     df = df.set_axis(dir_graphs.keys())
-    pd.set_option('max_columns', None)
+    # pd.set_option('max_columns', None)
     table3_file = f"{RESULT_DIR}/Table3.csv"
     print(f"Table 3 is stored to {table3_file}")
     df.to_csv(table3_file)
@@ -105,6 +105,7 @@ def collect_exp2():
                 data[g][a]=collect_data(f"{LOG_DIR}/exp2/{g}_scale_{surfix}.out", key_words)
             except:
                 data[g][a]=[float('nan')]*len(threads)
+    print(f"SCC scalability information is stored to {file_out}")
     with open(file_out, 'a') as f:
         for g in graphs:
             f.write(f"graph {g}\n")
@@ -112,12 +113,22 @@ def collect_exp2():
             df = df.set_axis(threads)
             df.to_csv(f)
             f.write("\n")
+    data_self=dict()
+    for g in graphs:
+        data_self[g]= data[g]["Ours"][-1]/np.array(data[g]["Ours"])
+    file_out = f"{RESULT_DIR}/Figure8.csv"
+    print(f"SCC self speedup is stored to {file_out}")
+    df = pd.DataFrame.from_dict(data_self)
+    df = df.set_axis(threads)
+    df.to_csv(file_out)
 def collect_exp3():
-    graphs = ["LJ", "TW", "SD", "CW", "CH5", "GL2", "GL20", "COS5", "SQR", "SQR_s"]
+    graphs = ["LJ", "TW", "SD", "CW", "HL12", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
     file_out = f"{RESULT_DIR}/Figure9.csv"
     data=dict()
     key_words = ["init_time", "first_round_time", "multi_search time", "hash table resize time"]
     for g in graphs:
+        if (g not in dir_graphs.keys()):
+            continue
         data[g]=dict()
         data[g]["GBBS"] =[]
         data[g]["Plain"]=[]
@@ -130,6 +141,8 @@ def collect_exp3():
             our_totals = collect_data(our_file, "average cost")
             for key in key_words:
                 gbbs_data = collect_data(GBBS_file, key)
+                if (len(gbbs_data) == 0):
+                    print(g, key)
                 data[g]["GBBS"].append(np.mean(gbbs_data[1:]))
                 our_data = collect_data(our_file, key)
                 data[g]["Plain"].append(our_data[0])
@@ -145,6 +158,8 @@ def collect_exp3():
     print(f"Breakdown information is writen to {file_out}")
     with open(file_out, 'a') as f:
         for g in graphs:
+            if (g not in dir_graphs.keys()):
+                continue
             f.write(f"graph {g}\n")
             df = pd.DataFrame.from_dict(data[g])
             df = df.set_axis(["Trimming", "First SCC", "Multi-search","Hash Table Resizing", "Others"])
@@ -157,6 +172,8 @@ def collect_exp4():
     file_out = f"{RESULT_DIR}/Figure11.csv"
     graphs = ["TW", "SD", "CW", "GL5", "COS5","SQR_s"]
     for g in graphs:
+        if g not in dir_graphs.keys():
+            continue
         data[g]=dict()
         try:
             for thread in threads:
@@ -166,17 +183,17 @@ def collect_exp4():
                 data[g][thread]=[float('nan')]*len(tau)
     print(f"Parameter tau information is writen to {file_out}")
     with open(file_out, 'a') as f:
-        for g in graphs:
+        for g in data.keys():
             f.write(f"graph {g}\n")
             df = pd.DataFrame.from_dict(data[g])
             df=df.set_axis(tau)
             df.to_csv(f)
             f.write("\n")
 def collect_exp6():
-    graphs = ["LJ", "TW", "SD", "CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
+    # graphs_rounds = ["LJ", "TW", "SD", "CW","HL12","CH5", "GL2", "GL10", "GL20", "COS5", "SQR", "SQR_s"]
     data=dict()
     file_out = f"{RESULT_DIR}/Figure10.csv"
-    for g in graphs:
+    for g in dir_graphs.keys():
         data[g]=dict()
         try:
             data_ = collect_data(f"{LOG_DIR}/exp6/{g}_round.out", "depth")
@@ -188,14 +205,37 @@ def collect_exp6():
             data[g]["VGC"]=[float('nan')]
     print(f"Write number of rounds with/without VGC to {file_out}")
     with open(file_out, 'a') as f:
-        for g in graphs:
+        for g in data.keys():
             f.write(f"graph {g}\n")
             df = pd.DataFrame.from_dict(data[g])
             df.to_csv(f)
             f.write("\n")
-collect_exp1()
-collect_exp2()
-collect_exp3()
-collect_exp4()
-collect_exp5()
-collect_exp6()
+    # for generate Table 2
+    graph_info=dict()
+    for g in dir_graphs.keys():
+        file_in = f"{LOG_DIR}/exp6/{g}_round.out"
+        graph_info[g]=[]
+        f = open(file_in,'r')
+        res = f.read()
+        f.close()
+        data_lines = re.findall(f"number of vertices.*", res)
+        data_v = list(map(lambda x: eval(x.replace(',', '').split(" ")[3]), data_lines))
+        graph_info[g].append(data_v[0])
+        graph_info[g].append(collect_data(file_in, "number of vertices")[0])
+        graph_info[g].append(np.max(data[g]["Plain"]))
+        graph_info[g].append(collect_data(file_in, "Largest StronglyConnectedComponents")[0])
+        graph_info[g].append(graph_info[3]/graph_info[0])
+        graph_info[g].append(collect_data(file_in, "n_scc =")[0])
+    df = pd.DataFrame.from_dict(graph_info)
+    df=df.set_axis(["n", "m", "D", "|SCC1|", "|SCC1|/n", "#SCC"])
+    file_out=f"{RESULT_DIR}/Table2.csv"
+    print(f"Graph information is stored to {file_out}")
+    df.to_csv(file_out)
+        
+if __name__ == "__main__":
+    # collect_exp1()
+    # collect_exp2()
+    collect_exp3()
+    # collect_exp4()
+    # collect_exp5()
+    # collect_exp6()

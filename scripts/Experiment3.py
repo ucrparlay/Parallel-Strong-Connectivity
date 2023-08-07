@@ -40,5 +40,5 @@ def run_breakdown():
         GBBS_breakdown(g, gbbs_out)
 
 if __name__ == "__main__":
-    par_rounds = 1
+    par_rounds = 10
     run_breakdown()

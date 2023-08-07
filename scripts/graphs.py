@@ -5,7 +5,7 @@
 import os
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 GRAPH_DIR = f"{CURRENT_DIR}/../data"
-# GRAPH_DIR = "/ssd0/graphs/links"
+# GRAPH_DIR = "/data0/graphs/links"
 dir_graphs = {
     # Social Graphs
     "LJ": ('soc-LiveJournal1', 'https://www.dropbox.com/scl/fi/836oq1mpruk6y0pul4d4t/soc-LiveJournal1.bin?rlkey=a97bmdoi31a0v87x2j6lmrldg&dl=0'),

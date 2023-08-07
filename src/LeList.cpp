@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
   char* filename = argv[1];
   timer t1;
   t1.start();
-  Graph G = read_graph(filename, !P.getOption("-nmmap"), P.getOption("-s"));
+  Graph G = P.getOption("-large")? read_large_sym_graph(filename):read_graph(filename, !P.getOption("-nmmap"));
   t1.stop();
   cout << "Graph: " << filename << endl;
   cout << "#vertices: " << G.n << " #edges: " << G.m << '\n';

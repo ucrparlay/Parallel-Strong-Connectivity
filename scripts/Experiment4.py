@@ -34,5 +34,5 @@ def run_SCC_tau_scale():
         SCC_tau_scale(g)
 if __name__ == "__main__":
     global par_rounds
-    par_rounds = 1
+    par_rounds = 10
     run_SCC_tau_scale()

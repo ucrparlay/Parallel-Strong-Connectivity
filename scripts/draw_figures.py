@@ -28,6 +28,8 @@ def read_multiple_dataframes(file):
     return data
 
 def Figure7(data, Tarjan_data):
+    graph_avail = list(data.keys())
+    graphs = ["TW", "SD", "CW", "SQR_s", "GL5","COS5"]
     fig, ax = plt.subplots(2,3, figsize=(9,3), sharex=True)
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.16, hspace=0.25)
     fig.add_subplot(111, frameon=False)
@@ -38,20 +40,19 @@ def Figure7(data, Tarjan_data):
     major_labels = ['1','2','4','8','24','96']
     x_minor = [12,48, 150]
     minor_labels=['12','48','96h']
-    graphs = list(data.keys())
-    algorithms = list(data[graphs[0]].keys())
+    algorithms = list(data[graph_avail[0]].keys())
     for g in graphs:
-        y_min = 1e5
-        for a in algorithms:
-            # note not all algorithms can run on all graphs
-            try:
-                # add label for each data line
-                # specify the color, markers
-                ax[i].plot(Tarjan_data[g]/data[g][a], markersize = 8, label=a,  alpha=1)
-                y_min = min(min(Tarjan_data[g]/data[g][a]), y_min)
-            except:
-                continue
-                
+        if g in graph_avail:
+            y_min = 1e5
+            for a in algorithms:
+                # note not all algorithms can run on all graphs
+                try:
+                    ax[i].plot(Tarjan_data[g]/data[g][a], markersize = 8, label=a,  alpha=1)
+                    y_min = min(min(Tarjan_data[g]/data[g][a]), y_min)
+                except:
+                    continue
+        else:
+            y_min=0
         # add horizontal reference line, show its ticks in red
         ax[i].hlines(y=1, xmin = 0, xmax=155, linestyle=':', color='r')
         ax[i].text(0.55,0.98, "{:.0f}".format(1),color='red', ha = 'left', va = 'center')
@@ -88,7 +89,7 @@ def Figure7(data, Tarjan_data):
 def Figure8(data):
     f, ax = plt.subplots(1,1,sharex=True, figsize=(3,1.5))
     for g in data.keys():
-        ax.plot(data[g]["Ours"][1]/data[g]["Ours"], label=f'{g}',markersize=9.5)
+        ax.plot(data[g], label=f'{g}',markersize=9.5)
     ax.set_xscale('log', base=2)
     ax.set_xticks([1,4,12,48,96,140],[1,4,12,48,96,'96h'] , fontsize=14, rotation=60)
     ax.set_yscale('log', base=2)
@@ -101,48 +102,58 @@ def Figure8(data):
     plt.savefig(f"{FIGURE_DIR}/Figure8.pdf", bbox_inches='tight')
 
 def Figure9(data):
-    graphs = list(data.keys())
-    algorithms = list(data[graphs[0]].keys())
+    graph_avail = list(data.keys())
+    graphs = ["LJ", "TW","SD","CW", "HL12", "CH5", "GL2","GL10","GL20","COS5", "SQR","SQR_s"]
+    algorithms = list(data[graph_avail[0]].keys())
     i = 0
-    f, ax = plt.subplots(2,5,sharex=True, figsize=(8.5,3.5))
+    f, ax = plt.subplots(2,6,sharex=True, figsize=(10,3.5))
     f.add_subplot(111, frameon=False)
     ax = ax.flatten()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=0.9, wspace=0.45, hspace=0.25)
     x = [0,1,2,3]
     # Names of group and bar width
     for g in graphs:
-        ax[i].bar(x, data[g].loc["Trimming"], width = 0.5, label = "Trimming")
-        bottom_bar = (data[g].loc["Trimming"]).copy()
-        ax[i].bar(x, data[g].loc["First SCC"], bottom = bottom_bar, width = 0.5, label='First SCC')
-        bottom_bar += data[g].loc["First SCC"]
-        ax[i].bar(x, data[g].loc['Multi-search'], bottom = bottom_bar, width = 0.5, label='Multi-search')
-        bottom_bar += data[g].loc['Multi-search']
-        ax[i].bar(x, data[g].loc['Hash Table Resizing'],  bottom=bottom_bar, width = 0.5, label='Hash Table Resizing')
-        bottom_bar += data[g].loc['Hash Table Resizing']
-        ax[i].bar(x, data[g].loc['Others'],  bottom=bottom_bar, width = 0.5, label='Others')
-        total_time = bottom_bar+data[g].loc['Others']
-        speedup=total_time['GBBS']/total_time["Final"]
-        ax[i].set_title(f'{g}: {speedup:.1f}', y=0.97)
-        ax[i].set_xticks(x,algorithms , fontsize=14, rotation=60)
+        if g in graph_avail:
+            ax[i].bar(x, data[g].loc["Trimming"], width = 0.5, label = "Trimming")
+            bottom_bar = (data[g].loc["Trimming"]).copy()
+            ax[i].bar(x, data[g].loc["First SCC"], bottom = bottom_bar, width = 0.5, label='First SCC')
+            bottom_bar += data[g].loc["First SCC"]
+            ax[i].bar(x, data[g].loc['Multi-search'], bottom = bottom_bar, width = 0.5, label='Multi-search')
+            bottom_bar += data[g].loc['Multi-search']
+            ax[i].bar(x, data[g].loc['Hash Table Resizing'],  bottom=bottom_bar, width = 0.5, label='Hash Table Resizing')
+            bottom_bar += data[g].loc['Hash Table Resizing']
+            ax[i].bar(x, data[g].loc['Others'],  bottom=bottom_bar, width = 0.5, label='Others')
+            total_time = bottom_bar+data[g].loc['Others']
+            speedup=total_time['GBBS']/total_time["Final"]
+            ax[i].set_title(f'{g}: {speedup:.1f}', y=0.97)
+            ax[i].set_xticks(x,algorithms , fontsize=14, rotation=60)
+        else:
+            ax[i].set_title(f'{g}', y=0.97)
+            ax[i].set_xticks(x,algorithms , fontsize=14, rotation=60)
         i+=1
     ax[2].legend(loc='lower center',bbox_to_anchor=(0.5,1.15), fontsize=14, ncol=3)
     plt.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
     plt.ylabel("running time(s)", fontsize=14, labelpad=10)
     plt.savefig(f"{FIGURE_DIR}/Figure9.pdf", bbox_inches='tight')
 def Figure10(data):
-    f, ax = plt.subplots(2,5, figsize=(8.5,3.5))
+    graph_avail = list(data.keys())
+    graphs = ["LJ", "TW","SD","CW", "HL12", "CH5", "GL2","GL10","GL20","COS5", "SQR","SQR_s"]
+    f, ax = plt.subplots(2,6, figsize=(10,3.5))
     ax = ax.flatten()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=0.9, wspace=0.5, hspace=0.60)
-    graphs = list(data.keys())
     i = 0
     for g in graphs:
-        ax[i].tick_params(axis = 'y', pad = 0.1)
-        # ax[i].yaxis.set_major_locator(MaxNLocator(5, integer=True))
-        colors_map = list(sns.color_palette('tab10'))
-        ax[i].scatter(data[g]["VGC"], data[g]["Plain"], alpha=0.2, color = colors_map[0])
-        factor = sum(data[g]["Plain"])/sum(data[g]["VGC"])
-        ax[i].set_title("{} k={:.0f}".format(g, factor), fontsize=14, y=0.97)
-        ax[i].tick_params(axis='x', rotation=90)
+        if g in graph_avail:
+            ax[i].tick_params(axis = 'y', pad = 0.1)
+            # ax[i].yaxis.set_major_locator(MaxNLocator(5, integer=True))
+            colors_map = list(sns.color_palette('tab10'))
+            ax[i].scatter(data[g]["VGC"], data[g]["Plain"], alpha=0.2, color = colors_map[0])
+            factor = sum(data[g]["Plain"])/sum(data[g]["VGC"])
+            ax[i].set_title("{} k={:.0f}".format(g, factor), fontsize=14, y=0.97)
+            ax[i].tick_params(axis='x', rotation=90)
+        else:
+            ax[i].set_title(f"{g}", fontsize=14, y=0.97)
+            ax[i].tick_params(axis='x', rotation=90)
         i+=1
     f.add_subplot(111, frameon=False)
     # hide tick and tick label of the big axes
@@ -153,8 +164,9 @@ def Figure10(data):
     plt.savefig(f"{FIGURE_DIR}/Figure10.pdf", bbox_inches='tight')
 
 def Figure11(data):
-    graphs=list(data.keys())
-    threads = list(data[graphs[0]].keys())
+    graph_avail=list(data.keys())
+    graphs = ["TW", "SD","CW","GL5", "COS5","SRQ_s"]
+    threads = list(data[graph_avail[0]].keys())
     f, ax = plt.subplots(2,3, figsize=(9,3),sharex=True)
     ax = ax.flatten()
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None,wspace=0.15, hspace=0.25)
@@ -176,17 +188,19 @@ def Figure11(data):
         "4": "solid", #"dotted",
     }
     for g in graphs:
-        for t in threads:
-            t_label=t
-            if (t=='192'):
-                t_label='96h'
-            ax[i].plot(tau, data[g][t]/data[g][t].loc["2^0"], label=t_label, color=colors_map[t], linestyle=lines_map[t])
-        ax[i].set_xscale('log', base=2)
-        ax[i].set_xticks([2**0, 2**8, 2**16],['$2^0$','$2^8$','$2^{16}$'] , fontsize=14)
-        ax[i].tick_params(axis = 'y', pad = 0.1)
-        ax[i].set_ylim(ymin=0)
-        ax[i].set_title(f'{g}')
-#         ax[i].grid()
+        if g in graph_avail:
+            for t in threads:
+                t_label=t
+                if (t=='192'):
+                    t_label='96h'
+                ax[i].plot(tau, data[g][t]/data[g][t].loc["2^0"], label=t_label, color=colors_map[t], linestyle=lines_map[t])
+            ax[i].set_xscale('log', base=2)
+            ax[i].set_xticks([2**0, 2**8, 2**16],['$2^0$','$2^8$','$2^{16}$'] , fontsize=14)
+            ax[i].tick_params(axis = 'y', pad = 0.1)
+            ax[i].set_ylim(ymin=0)
+            ax[i].set_title(f'{g}')
+        else:
+            ax[i].set_title(f"{g}")
         i+=1
     f.text(0.5, -0.05, r'$\tau$', ha='center', fontsize=16)
     f.text(0.07, 0.5, 'running time/no VGC', va='center', rotation='vertical', fontsize=14)
@@ -197,6 +211,7 @@ if __name__ == "__main__":
     data_scale = read_multiple_dataframes(f"{RESULT_DIR}/Figure7.csv")
     table3=pd.read_csv(f"{RESULT_DIR}/Table3.csv",header=0, index_col=0)
     Tarjan_data = table3["SEQ"]
+    data_self_speedup = pd.read_csv(f"{RESULT_DIR}/Figure8.csv",header=0, index_col=0)
     data_breakdown=read_multiple_dataframes(f"{RESULT_DIR}/Figure9.csv")
     data_rounds = read_multiple_dataframes(f"{RESULT_DIR}/Figure10.csv")
     data_tau = read_multiple_dataframes(f"{RESULT_DIR}/Figure11.csv")
@@ -204,7 +219,7 @@ if __name__ == "__main__":
     Figure7(data_scale, Tarjan_data)
     print(f"store Figure7.pdf to {FIGURE_DIR}/Figure7.pdf")
     print("drawing Figure8")
-    Figure8(data_scale)
+    Figure8(data_self_speedup)
     print(f"store Figure8.pdf to {FIGURE_DIR}/Figure8.pdf")
     print("drawing Figure9")
     Figure9(data_breakdown)

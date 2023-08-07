@@ -73,7 +73,7 @@ def run_scale(graph):
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 1
+    par_rounds = 10
     graphs = ["TW", "SD", "CW", "SQR_s", "GL5", "COS5"]
     for g in graphs:
         run_scale(g)
