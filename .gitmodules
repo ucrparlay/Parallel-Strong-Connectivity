@@ -1,13 +1,13 @@
 [submodule "parlaylib"]
 	path = parlaylib
-	url = git@github.com:LottieWang/parlay_baseline.git
+	url = https://github.com/LottieWang/parlay_baseline.git
 [submodule "baselines/gbbs"]
 	path = baselines/gbbs
-	url = git@github.com:LottieWang/gbbs.git
+	url = https://github.com/LottieWang/gbbs_baseline.git
 	branch = baseline
 [submodule "baselines/MultiStep"]
 	path = baselines/MultiStep
-	url = git@github.com:LottieWang/Connectivity.git
+	url = https://github.com/LottieWang/MultiStep_baseline.git
 [submodule "baselines/iSpan"]
 	path = baselines/iSpan
-	url = git@github.com:LottieWang/iSpan_baseline.git
+	url = https://github.com/LottieWang/iSpan_baseline.git
