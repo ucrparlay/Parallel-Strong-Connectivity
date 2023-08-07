@@ -71,7 +71,7 @@ def collect_exp5():
         (surfix, key_words)=val
         if (surfix==None):
             continue
-        for graph in dir_graphs.keys():
+        for graph in sym_graphs.keys():
             try: 
                 data_g = collect_data(f"{LOG_DIR}/exp5/{graph}{surfix}.out", key_words)
                 if (len(data_g)==1):
@@ -86,8 +86,7 @@ def collect_exp5():
     data["CC:Spd."] = data["DHS21"]/data['Our Connectivity']
     data["LE-List:Spd."] = data["parlaylib"]/data['Our LE-List']
     df = pd.DataFrame.from_dict(data)
-    df = df.set_axis(dir_graphs.keys())
-    pd.set_option('max_columns', None)
+    df = df.set_axis(sym_graphs.keys())
     table4_file = f"{RESULT_DIR}/Table4.csv"
     print(f"Table 4 is stored to {table4_file}")
     df.to_csv(table4_file)
@@ -222,20 +221,20 @@ def collect_exp6():
         data_v = list(map(lambda x: eval(x.replace(',', '').split(" ")[3]), data_lines))
         graph_info[g].append(data_v[0])
         graph_info[g].append(collect_data(file_in, "number of vertices")[0])
-        graph_info[g].append(np.max(data[g]["Plain"]))
         graph_info[g].append(collect_data(file_in, "Largest StronglyConnectedComponents")[0])
-        graph_info[g].append(graph_info[3]/graph_info[0])
+        graph_info[g].append(graph_info[g][2]/graph_info[g][0])
         graph_info[g].append(collect_data(file_in, "n_scc =")[0])
     df = pd.DataFrame.from_dict(graph_info)
-    df=df.set_axis(["n", "m", "D", "|SCC1|", "|SCC1|/n", "#SCC"])
+    df=df.set_axis(["n", "m", "|SCC1|", "|SCC1|/n", "#SCC"])
+    df=df.T
     file_out=f"{RESULT_DIR}/Table2.csv"
     print(f"Graph information is stored to {file_out}")
     df.to_csv(file_out)
         
 if __name__ == "__main__":
-    # collect_exp1()
-    # collect_exp2()
+    collect_exp1()
+    collect_exp2()
     collect_exp3()
-    # collect_exp4()
-    # collect_exp5()
-    # collect_exp6()
+    collect_exp4()
+    collect_exp5()
+    collect_exp6()

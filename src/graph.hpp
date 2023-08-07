@@ -315,6 +315,7 @@ Graph read_large_graph(char* filename) {
 }
 
 Graph read_large_sym_graph(char* filename) {
+  printf("read large sym graph %s\n", filename);
   ifstream ifs(filename);
   if (!ifs.is_open()) {
     cerr << "Error: Cannot open file " << filename << '\n';

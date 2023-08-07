@@ -165,7 +165,7 @@ def Figure10(data):
 
 def Figure11(data):
     graph_avail=list(data.keys())
-    graphs = ["TW", "SD","CW","GL5", "COS5","SRQ_s"]
+    graphs = ["TW", "SD","CW","GL5", "COS5","SQR_s"]
     threads = list(data[graph_avail[0]].keys())
     f, ax = plt.subplots(2,3, figsize=(9,3),sharex=True)
     ax = ax.flatten()

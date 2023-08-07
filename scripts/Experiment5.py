@@ -32,13 +32,15 @@ def run_Connectivity():
 def run_LeList():
     print("Testing Our Parallel LE-List Running Time")
     LeList = Algorithms['Ours_lelist']
+    memory_out_graphs = ["CW", "HL14", "HL12"]
     for key, val in sym_graphs.items():
         graph = val[0]
-        dlarge = "-large" if (graph=="HL12") else ""
+        if key in memory_out_graphs:
+            continue
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp5/{key}_lelist.out"
         print(f"Running on {key}")
-        cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds} {dlarge} >> {log_out}"
+        cmd = f"numactl -i all {LeList} {graph_in} -t {par_rounds} >> {log_out}"
         subprocess.call(cmd, shell=True)
 
 def run_ConnectIt():
@@ -54,8 +56,11 @@ def run_ConnectIt():
 def run_LeList_parlay():
     print("Testing parlaylib LE-List Running Time")
     LeList = Algorithms["parlay_lelist"]
+    memory_out_graphs = ["CW", "HL14", "HL12"]
     for key, val in sym_graphs.items():
         graph = val[0]
+        if key in memory_out_graphs:
+            continue
         graph_in = f"{GRAPH_DIR}/{graph}.bin"
         log_out = f"{CURRENT_DIR}/../log/exp5/{key}_lelist_parlay.out"
         print(f"Running on {key}")
@@ -63,7 +68,7 @@ def run_LeList_parlay():
         subprocess.call(cmd, shell=True)
 if __name__ == '__main__':
     global par_rounds
-    par_rounds = 1
+    par_rounds = 10
     run_Connectivity()
     run_LeList()
     run_ConnectIt()
