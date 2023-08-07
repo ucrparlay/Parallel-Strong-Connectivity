@@ -29,7 +29,7 @@ This repository contains code for our paper "Parallel Strong Connectivity based 
 Code download: git clone with submodules
 
 ```
-git clone --recurse-submodules git@github.com:ucrparlay/Parallel-Strong-Connectivity.git
+git clone --recurse-submodules https://github.com/ucrparlay/Parallel-Strong-Connectivity.git
 ```
 <!-- 
 We provide 3 small directed graphs as examples. They are located in `./data/directed`. Run the following commands to check if the deployment was successful:
