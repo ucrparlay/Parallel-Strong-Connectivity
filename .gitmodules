@@ -1,6 +1,6 @@
 [submodule "parlaylib"]
 	path = parlaylib
-	url = https://github.com/cmuparlay/parlaylib.git
+	url = git@github.com:LottieWang/parlay_baseline.git
 [submodule "baselines/gbbs"]
 	path = baselines/gbbs
 	url = git@github.com:LottieWang/gbbs.git

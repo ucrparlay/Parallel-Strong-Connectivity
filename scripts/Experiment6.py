@@ -13,7 +13,7 @@ def SCC_ROUND(graph, file_out):
     scc = Algorithms["Ours_scc_round"]
     dlong = "-long" if (graph=="HL12") else ""
     cmd_plain=f"numactl -i all {scc} {file_in} -t 0 {dlong} >> {file_out}"
-    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc {dlong} >>{file_out}"
+    cmd_final= f"numactl -i all {scc} {file_in} -t 0 -local_reach  -local_scc -status {dlong} >>{file_out}"
     cmds = [cmd_plain, cmd_final]
     for cmd in cmds:
         subprocess.call(cmd, shell=True)

@@ -105,12 +105,12 @@ def iSpan():
 
 if __name__ == '__main__':
     global par_rounds, seq_rounds
-    par_rounds = 1
-    seq_rounds = 1
-    # Our_scc()
-    # Our_scc_serial()
-    # GBBS_scc()
-    # GBBS_scc_serial()
-    # MultiStep()
+    par_rounds = 10
+    seq_rounds = 3
+    Our_scc()
+    Our_scc_serial()
+    GBBS_scc()
+    GBBS_scc_serial()
+    MultiStep()
     iSpan()
-    # Tarjan_scc()
+    Tarjan_scc()
